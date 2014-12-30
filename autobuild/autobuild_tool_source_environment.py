@@ -255,6 +255,11 @@ environment_template = """
         fi
     }
 
+    fix_pkgconfig_prefix() {
+        local path=$1
+        sed -i -e "s|\${AUTOBUILD_PACKAGES_DIR}$|$path|" $(find $path -name '*.pc')
+    }
+
     MAKEFLAGS="%(MAKEFLAGS)s"
     #DISTCC_HOSTS="%(DISTCC_HOSTS)s"
 
