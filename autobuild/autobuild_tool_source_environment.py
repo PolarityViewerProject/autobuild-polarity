@@ -76,7 +76,11 @@ def load_vsvars(vsver):
         raise SourceEnvError("No env variable %s, is Visual Studio %s installed?%s" %
                              (key, vsver, explain))
 
-    vsvars_path = os.path.join(VSxxxCOMNTOOLS, "vsvars32.bat")
+    if common.get_current_platform() == "windows64":
+        vsvars_path = os.path.join(VSxxxCOMNTOOLS, "..", "..", "VC", "bin", "amd64", "vcvars64.bat")
+    else:
+        vsvars_path = os.path.join(VSxxxCOMNTOOLS, "vsvars32.bat")
+
     # Invent a temp filename into which to capture our script output. Some
     # versions of vsvars32.bat emit stdout, some don't; we've been bitten both
     # ways. Bypass that by not commingling our desired output into stdout.
@@ -257,7 +261,7 @@ environment_template = """
     $restore_xtrace
 """
 
-if common.get_current_platform() == "windows":
+if common.get_current_platform() == "windows" or common.get_current_platform() == "windows64":
     windows_template = """
     # disable verbose debugging output
     set +o xtrace
@@ -317,7 +321,7 @@ def do_source_environment(args):
     # feeding a bash shell, twiddle that pathname for cygwin bash.
     autobuild_path = common.get_autobuild_executable_path()
     AUTOBUILD = os.environ.get("AUTOBUILD",
-                               autobuild_path if common.get_current_platform() != "windows"
+                               autobuild_path if common.get_current_platform() != "windows" or common.get_current_platform() != "windows64"
                                else ("$(cygpath -u '%s')"% autobuild_path))
     var_mapping = {'AUTOBUILD_EXECUTABLE_PATH': AUTOBUILD,
                    'AUTOBUILD_VERSION_STRING': common.AUTOBUILD_VERSION_STRING,
@@ -326,7 +330,7 @@ def do_source_environment(args):
                    'DISTCC_HOSTS': "",
                    }
 
-    if common.get_current_platform() == "windows":
+    if common.get_current_platform() == "windows" or common.get_current_platform() == "windows64":
         try:
             # reset stdout in binary mode so sh doesn't get confused by '\r'
             import msvcrt
