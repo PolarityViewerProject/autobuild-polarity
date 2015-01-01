@@ -42,7 +42,7 @@ import pprint
 import logging
 import tarfile
 import zipfile
-import urllib2
+import requests
 import codecs
 
 from . import common
@@ -247,9 +247,10 @@ def get_package_file(package_name, package_url, hash_algorithm='md5', expected_h
             logger.warning("downloading %s" % package_name)
             logger.info("  get %s\n     to %s" % (package_url, cache_file))
             try:
-                package_response = urllib2.urlopen(package_url, None, download_timeout_seconds)
-            except urllib2.URLError as err:
-                logger.warning("error: %s\n  downloading package %s" % (err, package_url))
+                package_response = requests.get(package_url, timeout=download_timeout_seconds, stream=True)
+                package_response.raise_for_status() # throws exception for any non-success
+            except requests.exceptions.RequestException as err:
+                logger.warning("error: %s" % err)
                 package_response = None
                 cache_file = None
 
@@ -259,22 +260,19 @@ def get_package_file(package_name, package_url, hash_algorithm='md5', expected_h
                     package_size = int(package_response.headers.get("content-length", 0))
                     package_blocks = package_size / max_block_size if package_size else 0
                     if package_blocks < (package_size * max_block_size):
-                        package_blocks += 1 
-                    logger.debug("response size %d blocks %d" % (package_size, package_blocks))
+                        package_blocks += 1
                     blocks_recvd = 0
-                    block = package_response.read(max_block_size)
-                    while block:
+                    for block in package_response.iter_content(max_block_size):
                         blocks_recvd += 1
                         if logger.getEffectiveLevel() <= logging.INFO:
                             # use CR and trailing comma to rewrite the same line each time for progress
                             if package_blocks:
-                                print("%d MB / %d MB (%d%%)\r" % (blocks_recvd, package_blocks, int(100*blocks_recvd/package_blocks)), end=' ')
-                                sys.stdout.flush()
+                                print("%dMB / %dMB (%d%%)\r" % (blocks_recvd, package_blocks, int(100*blocks_recvd/package_blocks)),
+                                sys.stdout.flush())
                             else:
                                 print("%d\r" % blocks_recvd, end=' ')
                                 sys.stdout.flush()
                         cache.write(block)
-                        block = package_response.read(max_block_size)
                 if logger.getEffectiveLevel() <= logging.INFO:
                     print("")  # get a new line following progress message
                     sys.stdout.flush()
