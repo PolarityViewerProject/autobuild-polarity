@@ -25,17 +25,18 @@
 Builds the source for a package.
 """
 
+from __future__ import absolute_import
 import os
 import re
 import logging
 import copy
 
 # autobuild modules:
-import common
-import autobuild_base
-import configfile
-from common import AutobuildError
-from autobuild_tool_configure import _configure_a_configuration
+from . import common
+from . import autobuild_base
+from . import configfile
+from .common import AutobuildError
+from .autobuild_tool_configure import _configure_a_configuration
 
 
 logger = logging.getLogger('autobuild.build')
@@ -221,7 +222,7 @@ def _build_a_configuration(config, build_configuration, platform_name=common.get
         common_build_configuration = \
             config.get_build_configuration(build_configuration.name, platform_name='common')
         parent_build = common_build_configuration.build
-    except Exception, e:
+    except Exception as e:
         if logger.getEffectiveLevel() <= logging.DEBUG:
             logger.exception(e)
         logger.debug('no common platform found')

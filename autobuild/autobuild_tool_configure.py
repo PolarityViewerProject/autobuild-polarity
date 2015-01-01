@@ -26,11 +26,12 @@
 Configures source in preparation for building.
 """
 
-import autobuild_base
+from __future__ import absolute_import
+from . import autobuild_base
 import copy
-import common
-from common import AutobuildError
-import configfile
+from . import common
+from .common import AutobuildError
+from . import configfile
 import os
 import logging
 
@@ -117,7 +118,7 @@ def _configure_a_configuration(config, build_configuration, extra_arguments, dry
         common_build_configuration = \
             config.get_build_configuration(build_configuration.name, platform_name='common')
         parent_configure = common_build_configuration.configure
-    except Exception, e:
+    except Exception as e:
         if logger.getEffectiveLevel() <= logging.DEBUG:
             logger.exception(e)
         logger.debug('no common platform found')

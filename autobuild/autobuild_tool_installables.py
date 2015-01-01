@@ -28,15 +28,16 @@ Installables are package descriptions which describe dowloadable archives
 that may installed by autobuild.
 """
 
+from __future__ import absolute_import
 import sys
 import pprint
 import re
 import logging
 
-import common
-import configfile
-import autobuild_base
-from autobuild_tool_install import get_package_file, get_metadata_from_package
+from . import common
+from . import configfile
+from . import autobuild_base
+from .autobuild_tool_install import get_package_file, get_metadata_from_package
 
 logger = logging.getLogger('autobuild.installables')
 

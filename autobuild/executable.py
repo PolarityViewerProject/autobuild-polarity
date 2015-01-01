@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # $LicenseInfo:firstyear=2010&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
 # 
@@ -28,11 +27,13 @@ Author : Alan Linden
 Date   : 2010-09-29
 """
 
+from __future__ import print_function
+from __future__ import absolute_import
 import os
 import subprocess
 import re
 
-import common
+from . import common
 
 
 class ExecutableError(common.AutobuildError):
@@ -80,7 +81,7 @@ class Executable(common.Serialized):
                     continue
                 line = line.replace("\r\n", "\n")
                 line = line.replace("\r", "\n")
-                print line,  # Trailing , prevents an extra newline
+                print(line, end=' ')  # Trailing , prevents an extra newline
             return process.wait()
         else:
             return subprocess.call(' '.join(self._get_all_arguments(options)), shell=True, env=environment)

@@ -20,14 +20,15 @@
 # THE SOFTWARE.
 # $/LicenseInfo$
 
+from __future__ import absolute_import
 import unittest
-from baseline_compare import AutobuildBaselineCompare
+from .baseline_compare import AutobuildBaselineCompare
 from autobuild import autobuild_tool_configure as configure
 import autobuild.configfile as configfile
 from autobuild.executable import Executable
 import autobuild.common as common
 import os
-from basetest import BaseTest
+from .basetest import BaseTest
 
 
 class TestConfigure(BaseTest, AutobuildBaselineCompare):

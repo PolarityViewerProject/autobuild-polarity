@@ -20,6 +20,7 @@
 # THE SOFTWARE.
 # $/LicenseInfo$
 
+from __future__ import absolute_import
 import os
 import sys
 from ast import literal_eval
@@ -30,8 +31,8 @@ import stat
 import subprocess
 import tempfile
 
-import common
-import autobuild_base
+from . import common
+from . import autobuild_base
 
 
 logger = logging.getLogger('autobuild.source_environment')

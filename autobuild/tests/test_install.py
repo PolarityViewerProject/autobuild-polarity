@@ -24,6 +24,7 @@
 #
 
 from __future__ import with_statement
+from __future__ import absolute_import
 
 import os
 import sys
@@ -38,7 +39,7 @@ import urllib
 import urlparse
 import posixpath
 import subprocess
-from basetest import *
+from .basetest import *
 from nose.tools import *                # assert_equals etc.
 from string import Template
 from threading import Thread
@@ -104,7 +105,7 @@ def query_manifest(options=None):
         # Output isn't empty: should be Python-parseable.
         try:
             sequence = eval(raw)
-        except Exception, err:
+        except Exception as err:
             logger.error("couldn't parse --export-manifest output:\n" + raw)
             raise
     logger.debug("--export-manifest output:\n" + raw)
@@ -140,7 +141,7 @@ def setup():
             httpd = HTTPServer((HOST, PORT), DownloadServer)
             # if that worked, break loop!
             break
-        except socket.error, err:
+        except socket.error as err:
             # Anything other than 'Address already in use', propagate
             if err.args[0] != 48:       # symbolic name somewhere??
                 raise

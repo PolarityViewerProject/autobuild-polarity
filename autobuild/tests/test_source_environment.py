@@ -20,9 +20,10 @@
 # THE SOFTWARE.
 # $/LicenseInfo$
 
+from __future__ import absolute_import
 import unittest
 from autobuild import autobuild_tool_source_environment
-from basetest import BaseTest
+from .basetest import BaseTest
 
 class TestSourceEnvironment(BaseTest):
     def setUp(self):

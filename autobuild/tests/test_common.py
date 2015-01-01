@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # $/LicenseInfo$
-#!/usr/bin/python
 
+from __future__ import absolute_import
 import os
 import shutil
 import tarfile
@@ -28,7 +28,7 @@ import tempfile
 import unittest
 from zipfile import ZipFile
 from autobuild import common
-from basetest import *
+from .basetest import *
 
 class TestCommon(BaseTest):
     def setUp(self):

@@ -26,11 +26,11 @@
 Includes tools for updating older versions of autobuild configurations to the the current format.
 """
 
-
-from common import AutobuildError, get_version_tuple
+from __future__ import absolute_import
+from .common import AutobuildError, get_version_tuple
 # Please do NOT import configfile data classes! See comments for _register().
 # or Executable either, which also changes with AUTOBUILD_CONFIG_VERSION
-from configfile import AUTOBUILD_CONFIG_VERSION
+from .configfile import AUTOBUILD_CONFIG_VERSION
 import logging
 import shlex
 

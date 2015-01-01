@@ -35,6 +35,7 @@ Author : Martin Reddy
 Date   : 2010-04-13
 """
 
+from __future__ import absolute_import
 import os
 import sys
 import time
@@ -45,7 +46,7 @@ import pprint
 import tempfile
 import argparse
 
-from version import AUTOBUILD_VERSION_STRING
+from .version import AUTOBUILD_VERSION_STRING
 
 logger = logging.getLogger('autobuild.common')
 
@@ -210,7 +211,7 @@ def get_install_cache_dir():
         cache = get_temp_dir("install.cache")
     else:
         if not os.path.exists(cache):
-            os.makedirs(cache, mode=0755)
+            os.makedirs(cache, mode=0o755)
     return cache
 
 
@@ -227,7 +228,7 @@ def get_temp_dir(basename):
     else:
         tmpdir = "/var/tmp/%s/%s" % (user, basename)
     if not os.path.exists(tmpdir):
-        os.makedirs(tmpdir, mode=0755)
+        os.makedirs(tmpdir, mode=0o755)
     return tmpdir
 
 
@@ -307,7 +308,7 @@ def compute_md5(path):
 
     try:
         stream = open(path, 'rb')
-    except IOError, err:
+    except IOError as err:
         raise AutobuildError("Can't compute MD5 for %s: %s" % (path, err))
 
     try:

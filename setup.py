@@ -76,10 +76,10 @@ ext_modules = []
 setup(
     name=PACKAGE_NAME,
     version="%s.%s" % (AUTOBUILD_VERSION_STRING, BUILD),
-    author='Oz Linden',
-    author_email='oz@lindenlab.com',
+    author='Oz Linden, Cinder Roxley',
+    author_email='cinder@alchemyviewer.org',
     url="http://wiki.secondlife.com/wiki/Autobuild",
-    description='Linden Lab Automated Package Management and Build System',
+    description='Linden Lab Automated Package Management and Build System with Alchemy Team enhancements',
     platforms=["any"],
     package_dir={PACKAGE_NAME:LLAUTOBUILD_SOURCE},
     packages=[PACKAGE_NAME],
@@ -90,7 +90,7 @@ setup(
     # argparse is specifically for Python 2.6 compatibility. If/when we drop
     # Python 2.6 support, the conditional argparse item can be removed from
     # install_requires: it's bundled with Python 2.7+.
-    install_requires=['llbase', 'pydot2'] + \
+    install_requires=['llbase', 'pydot2', 'future'] + \
                      (['argparse'] if sys.version_info[:2] < (2, 7) else []),
     #ext_modules=ext_modules,
     )

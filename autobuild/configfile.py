@@ -27,6 +27,7 @@ API to access the autobuild configuration file.
 Author : Alain Linden
 """
 
+from __future__ import absolute_import
 import os
 import itertools
 import pprint
@@ -38,8 +39,8 @@ except ImportError:
     sys.exit("Failed to import llsd via the llbase module; to install, use:\n"
              "  pip install llbase")
 
-import common
-from executable import Executable
+from . import common
+from .executable import Executable
 import logging
 
 logger = logging.getLogger('autobuild.configfile')
@@ -194,7 +195,7 @@ class ConfigurationDescription(common.Serialized):
             
     def __load(self, path):
         # circular imports, sorry, must import update locally
-        import update
+        from . import update
 
         if os.path.isabs(path):
             self.path = path
@@ -541,7 +542,7 @@ class PackageDescription(common.Serialized):
         try:
             with open(version_file) as vf:
                 version = vf.read().strip()
-        except IOError, err:
+        except IOError as err:
             raise common.AutobuildError("Can't read version_file '%s': %s" %
                                         (self.version_file, err))
 

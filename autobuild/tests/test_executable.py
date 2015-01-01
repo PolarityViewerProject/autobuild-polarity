@@ -20,11 +20,12 @@
 # THE SOFTWARE.
 # $/LicenseInfo$
 
+from __future__ import absolute_import
 import sys
 import unittest
 from nose.plugins.skip import SkipTest
 from autobuild.executable import Executable
-from basetest import BaseTest
+from .basetest import BaseTest
 
 class TestExecutable(BaseTest):
     def setUp(self):

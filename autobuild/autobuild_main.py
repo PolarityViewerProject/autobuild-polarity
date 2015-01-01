@@ -20,6 +20,8 @@
 # THE SOFTWARE.
 # $/LicenseInfo$
 
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import os
 
@@ -35,9 +37,8 @@ class LocalScope(object):
 
     # We have NOT yet tested autobuild with Python 3!
     if sys.version_info[0] >= 3:
-        print >>sys.stderr, \
-              "%s autobuild is untested with Python 3+, experiment at your own risk.%s" % \
-              (WARNING.ljust(msgind), vermsg)
+        print("%s autobuild is untested with Python 3+, experiment at your own risk.%s" % \
+              (WARNING.ljust(msgind), vermsg), file=sys.stderr)
 
     # As of autobuild version 0.9, autobuild requires at least Python 2.6.
     elif sys.version_info[:2] < (2, 6):
@@ -46,10 +47,10 @@ class LocalScope(object):
         sys.exit("%s autobuild now requires Python 2.7.%s" %
                  (ERROR.ljust(msgind), vermsg))
 
-import common
+from . import common
 import argparse
 import logging
-from common import AutobuildError
+from .common import AutobuildError
 
 ## Environment variable name used for default log level verbosity
 AUTOBUILD_LOGLEVEL = 'AUTOBUILD_LOGLEVEL'
@@ -59,7 +60,7 @@ class RunHelp(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         parser.parent.search_for_and_import_tools(parser.parent.tools_list)
         parser.parent.register_tools(parser.parent.tools_list)
-        print parser.format_help()
+        print(parser.format_help())
         parser.exit(0)
 
 
@@ -83,7 +84,7 @@ class Version(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         formatter = parser._get_formatter()
         formatter.add_text(self.version or parser.version)
-        print formatter.format_help()
+        print(formatter.format_help())
         parser.exit(message="")
 
 
@@ -249,9 +250,9 @@ def main():
     try:
         os.environ['PATH'] = os.environ.get('PATH') + os.pathsep + script_path
         sys.exit(Autobuild().main(sys.argv[1:]))
-    except KeyboardInterrupt, e:
+    except KeyboardInterrupt as e:
         sys.exit("Aborted...")
-    except common.AutobuildError, e:
+    except common.AutobuildError as e:
         if logger.getEffectiveLevel() <= logging.DEBUG:
             logger.exception(str(e))
         msg = ["ERROR: ", str(e)]

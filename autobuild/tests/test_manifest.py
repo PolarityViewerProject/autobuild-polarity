@@ -23,7 +23,7 @@
 # Unit testing of manifest subcommand.
 #
 
-
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -32,9 +32,9 @@ import logging
 from autobuild import configfile
 from autobuild import common
 from autobuild.autobuild_main import Autobuild
-from baseline_compare import AutobuildBaselineCompare
+from .baseline_compare import AutobuildBaselineCompare
 import autobuild.autobuild_tool_manifest as manifest
-from basetest import BaseTest
+from .basetest import BaseTest
 
 logger = logging.getLogger("test_manifest")
 

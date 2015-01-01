@@ -33,6 +33,8 @@ Author : Martin Reddy
 Date   : 2010-04-19
 """
 
+from __future__ import print_function
+from __future__ import absolute_import
 import os
 import sys
 import errno
@@ -43,10 +45,10 @@ import zipfile
 import urllib2
 import codecs
 
-import common
-import configfile
-import autobuild_base
-import hash_algorithms
+from . import common
+from . import configfile
+from . import autobuild_base
+from . import hash_algorithms
 
 logger = logging.getLogger('autobuild.install')
 # Emitting --dry-run messages at warning() level means they're displayed in a
@@ -92,7 +94,7 @@ def print_list(label, array):
     if array:
         array.sort()
         list = ", ".join(array)
-    print "%s: %s" % (label, list)
+    print("%s: %s" % (label, list))
     return True
 
 
@@ -139,7 +141,7 @@ def handle_query_args(options, config_file, installed_file):
             all_copyrights = ""
         for pkg in sorted(copyrights):
             all_copyrights += "%s: %s" % (pkg, copyrights[pkg])
-        print all_copyrights.rstrip() # the rstrip prevents two newlines on the end
+        print(all_copyrights.rstrip()) # the rstrip prevents two newlines on the end
         return True
 
     if options.versions:
@@ -159,7 +161,7 @@ def handle_query_args(options, config_file, installed_file):
         all_versions = ""
         for pkg in sorted(versions):
             all_versions += "%s: %s" % (pkg, versions[pkg])
-        print all_versions.rstrip() # the rstrip prevents two newlines on the end
+        print(all_versions.rstrip()) # the rstrip prevents two newlines on the end
         return True
 
     if options.export_manifest:
@@ -182,7 +184,7 @@ def handle_query_args(options, config_file, installed_file):
                 archives.append('%s' % package['archive']['url'])
             else:
                 archives.append('%s - no url' % name)
-        print '\n'.join(archives)
+        print('\n'.join(archives))
         return True
 
     if options.query_installed_file:
@@ -200,10 +202,10 @@ def print_package_for(target_file, installed_file):
             break
             
     if found_package:
-        print "file '%s' installed by package '%s'" \
-        % (target_file, package['package_description']['name'])
+        print("file '%s' installed by package '%s'" \
+        % (target_file, package['package_description']['name']))
     else:
-        print "file '%s' not found in installed files" % target_file
+        print("file '%s' not found in installed files" % target_file)
 
 
 def package_cache_path(package):
@@ -266,15 +268,15 @@ def get_package_file(package_name, package_url, hash_algorithm='md5', expected_h
                         if logger.getEffectiveLevel() <= logging.INFO:
                             # use CR and trailing comma to rewrite the same line each time for progress
                             if package_blocks:
-                                print "%d MB / %d MB (%d%%)\r" % (blocks_recvd, package_blocks, int(100*blocks_recvd/package_blocks)),
+                                print("%d MB / %d MB (%d%%)\r" % (blocks_recvd, package_blocks, int(100*blocks_recvd/package_blocks)), end=' ')
                                 sys.stdout.flush()
                             else:
-                                print "%d\r" % blocks_recvd,
+                                print("%d\r" % blocks_recvd, end=' ')
                                 sys.stdout.flush()
                         cache.write(block)
                         block = package_response.read(max_block_size)
                 if logger.getEffectiveLevel() <= logging.INFO:
-                    print ""  # get a new line following progress message
+                    print("")  # get a new line following progress message
                     sys.stdout.flush()
                 # some failures seem to leave empty cache files... delete and retry
                 if os.path.exists(cache_file) and os.path.getsize(cache_file) == 0:
@@ -330,14 +332,14 @@ def extract_metadata_from_package(archive_path, metadata_file_name):
             tar = tarfile.open(archive_path, 'r')
             try:
                 metadata_file = tar.extractfile(metadata_file_name)
-            except KeyError, err:
+            except KeyError as err:
                 metadata_file = None
                 pass  # returning None will indicate that it was not there
         elif zipfile.is_zipfile(archive_path):
             try:
                 zip = zipfile.ZipFile(archive_path, 'r')
                 metadata_file = zip.open(metadata_file_name, 'r')
-            except KeyError, err:
+            except KeyError as err:
                 metadata_file = None
                 pass  # returning None will indicate that it was not there
         else:
@@ -740,7 +742,7 @@ def clean_files(install_dir, files):
                 # through this logic without actually deleting. So produce a
                 # message only when we're sure we've actually deleted something.
                 logger.debug("    removed " + filename)
-            except OSError, err:
+            except OSError as err:
                 if err.errno == errno.ENOENT:
                     # this file has already been deleted for some reason -- fine
                     logger.warning("    expected file not found: " + install_path)
@@ -818,7 +820,7 @@ def install_packages(args, config_file, install_dir, platform, packages):
             # in case we got this far without ever having created installed_file's
             # parent directory
             os.makedirs(os.path.dirname(installed.path))
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.EEXIST:
                 raise AutobuildError(str(err))
         installed.save()
