@@ -49,7 +49,8 @@ os.environ["PATH"] = os.pathsep.join([os.environ["PATH"], os.path.normpath(
 class BuildError(AutobuildError):
     pass
     
-boolopt=re.compile("true$",re.I)
+boolopt = re.compile("true$", re.I)
+
 
 class AutobuildTool(autobuild_base.AutobuildBase):
     def get_details(self):
@@ -98,7 +99,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             dest='platform',
                             help='may only be the current platform or "common" (useful for source packages)')
         parser.add_argument('--address-size', choices=[32,64], type=int,
-                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE',common.DEFAULT_ADDRSIZE)),
+                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE', common.DEFAULT_ADDRSIZE)),
                             dest='addrsize',
                             help='specify address size (modifies platform)')
 
@@ -124,7 +125,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
             # is why we pass get() a default value that bypasses verbose)
             # (version_file was introduced at AUTOBUILD_CONFIG_VERSION 1.3)
             if "version_file" in package_errors.attrs \
-            and common.get_version_tuple(config.get("orig_ver", "1.3")) < (1, 3):
+                    and common.get_version_tuple(config.get("orig_ver", "1.3")) < (1, 3):
                 verbose = """
 New requirement: instead of stating a particular version number in the %(xml)s
 file, we now require you to configure a version_file attribute. This should be
@@ -207,8 +208,8 @@ only by 'autobuild build' to create package metadata.
                     logger.debug("no installed files found (%s)" % installed_pathname)
                 if args.clean_only and metadata_file.dirty:
                     raise BuildError("Build depends on local or legacy installables\n"
-                               +"  use 'autobuild install --list-dirty' to see problem packages\n"
-                               +"  rerun without --clean-only to allow building anyway")
+                                     + "  use 'autobuild install --list-dirty' to see problem packages\n"
+                                     + "  rerun without --clean-only to allow building anyway")
                 if not args.dry_run:
                     metadata_file.save()
         finally:

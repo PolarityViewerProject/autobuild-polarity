@@ -47,8 +47,8 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             dest='config_file',
                             default=configfile.AUTOBUILD_CONFIG_FILE,
                             help='(defaults to $AUTOBUILD_CONFIG_FILE or "autobuild.xml")')
-        parser.add_argument('--address-size', choices=[32,64], type=int, 
-                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE',common.DEFAULT_ADDRSIZE)),
+        parser.add_argument('--address-size', choices=[32, 64], type=int,
+                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE', common.DEFAULT_ADDRSIZE)),
                             dest='addrsize',
                             help='specify address size (modifies platform)')
         parser.add_argument('--platform', '-p', default=os.environ.get('AUTOBUILD_PLATFORM_OVERRIDE'),
@@ -58,7 +58,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
         parser.add_argument('pattern', nargs='*', help='a file pattern')
 
     def run(self, args):
-        platform=common.establish_platform(args.platform, addrsize=args.addrsize)
+        platform = common.establish_platform(args.platform, addrsize=args.addrsize)
         config = configfile.ConfigurationDescription(args.config_file)
         if args.command == 'add':
             [add(config, platform, p) for p in args.pattern]

@@ -47,6 +47,7 @@ class UpdateError(AutobuildError):
 # version, conversion function) pairs.
 _updaters = {}
 
+
 # Do not directly manipulate _updaters. Register each converter using this
 # _register() function.
 #
@@ -78,6 +79,7 @@ def _register(fromver, tover, func):
     # Each fromver accesses a list of pairs. Create or extend that list with
     # this new pair.
     _updaters.setdefault(fromver, []).append((tover, func))
+
 
 # Get a list of (fromver, tover, converter) triples to apply in succession to
 # bring incoming LLSD in 'version' format up to AUTOBUILD_CONFIG_VERSION
@@ -133,6 +135,7 @@ def _get_applicable_updaters(configname, version):
     # ta daa, we've reached AUTOBUILD_CONFIG_VERSION!
     return result
 
+
 def convert_to_current(configname, config):
     """
     Pass the LLSD config data read from file configname.
@@ -175,6 +178,7 @@ https://wiki.lindenlab.com/wiki/Autobuild/Incompatible_Configuration_File_Error"
 #   Updaters
 # ****************************************************************************
 # -------------------------------- 1.1 -> 1.2 --------------------------------
+
 class _Update_1_1(object):
     """
     Converts a 1.1 version configuration to 1.2.

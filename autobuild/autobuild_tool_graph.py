@@ -102,8 +102,8 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             help="specify build configuration\n(may be specified in $AUTOBUILD_CONFIGURATION)",
                             metavar='CONFIGURATION',
                             default=self.configurations_from_environment())
-        parser.add_argument('--address-size', choices=[32,64], type=int,
-                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE',common.DEFAULT_ADDRSIZE)),
+        parser.add_argument('--address-size', choices=[32, 64], type=int,
+                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE', common.DEFAULT_ADDRSIZE)),
                             dest='addrsize',
                             help='specify address size (modifies platform)')
         parser.add_argument('-p', '--platform',
@@ -132,8 +132,9 @@ class AutobuildTool(autobuild_base.AutobuildBase):
         parser.add_argument('--dot-file', '-D',
                             dest='dot_file', default=None,
                             help='save the dot input file in the specified file')
+
     def run(self, args):
-        platform=common.establish_platform(args.platform, addrsize=args.addrsize)
+        platform = common.establish_platform(args.platform, addrsize=args.addrsize)
         metadata = None
         incomplete = ''
         if not args.source_file:
@@ -191,10 +192,10 @@ class AutobuildTool(autobuild_base.AutobuildBase):
 
             def add_depends(graph, pkg):
                 name = pkg['package_description']['name']
-                got = graph.get_node(name) # can return a single Node instance, a list of Nodes, or None 
+                got = graph.get_node(name)  # can return a single Node instance, a list of Nodes, or None
                 try:
                     pkg_node = got if got is None or isinstance(got, pydot.Node) else got[0]
-                except IndexError: # some versions of pydot may return an empty list instead of None
+                except IndexError:  # some versions of pydot may return an empty list instead of None
                     pkg_node = None
                 if pkg_node is None:
                     logger.debug(" graph adding package %s" % name)
@@ -226,7 +227,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
 
             if args.dot_file:
                 try:
-                    dot_file=open(args.dot_file,'wb')
+                    dot_file=open(args.dot_file, 'wb')
                 except IOError, err:
                     raise GraphError("Unable to open dot file %s: %s" % (args.dot_file, err))
                 dot_file.write(graph.to_string())

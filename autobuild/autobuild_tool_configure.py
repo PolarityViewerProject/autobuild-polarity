@@ -58,8 +58,8 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             help="build a specific build configuration\n(may be specified as comma separated values in $AUTOBUILD_CONFIGURATION)",
                             metavar='CONFIGURATION',
                             default=self.configurations_from_environment())
-        parser.add_argument('--address-size', type=int, choices=[32,64], 
-                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE',common.DEFAULT_ADDRSIZE)),
+        parser.add_argument('--address-size', type=int, choices=[32, 64],
+                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE', common.DEFAULT_ADDRSIZE)),
                             dest='addrsize',
                             help='specify address size (modifies platform)')
         parser.add_argument('-p', '--platform',
@@ -72,7 +72,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             help="an option to pass to the configuration command")
 
     def run(self, args):
-        platform=common.establish_platform(args.platform, addrsize=args.addrsize)
+        platform = common.establish_platform(args.platform, addrsize=args.addrsize)
         common.establish_build_id(args.build_id)  # sets id (even if not specified),
                                                   # and stores in the AUTOBUILD_BUILD_ID environment variable
         config = configfile.ConfigurationDescription(args.config_file)
@@ -94,6 +94,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                     raise ConfigurationError("default configuration returned %d" % result)
         finally:
             os.chdir(current_directory)
+
 
 def configure(config, build_configuration_name, extra_arguments=[]):
     """

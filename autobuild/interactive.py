@@ -109,7 +109,6 @@ class InteractiveCommand(object):
                     input_values[argument] = i
             except EOFError:
                 print ""
-                exit = 'y'
                 exit = raw_input("Do you really want to exit ([y]/n)? ")
                 if exit == 'y':
                     sys.exit(0)

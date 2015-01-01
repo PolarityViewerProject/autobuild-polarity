@@ -26,7 +26,6 @@ from ast import literal_eval
 import logging
 from pprint import pformat
 import re
-import shutil
 import stat
 import subprocess
 import tempfile
@@ -58,8 +57,10 @@ if os.path.exists(helper):
         assert sys.path[_helper_idx] == helper
         del sys.path[_helper_idx]
 
+
 class SourceEnvError(common.AutobuildError):
     pass
+
 
 def load_vsvars(vsver):
     key = "VS%sCOMNTOOLS" % vsver

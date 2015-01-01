@@ -201,7 +201,7 @@ class Configure(_config):
         new_command = {'command': command,
                        'options': listify_str(options),
                        'arguments': listify_str(arguments)}
-        build_config_desc = self.create_or_update_build_config_desc(name, platform, default=default, configure=new_command)
+        self.create_or_update_build_config_desc(name, platform, default=default, configure=new_command)
 
     def delete(self, name='', platform='', **kwargs):
         """

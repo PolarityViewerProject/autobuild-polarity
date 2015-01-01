@@ -23,13 +23,14 @@
 import sys
 import os
 
+
 # Hide some load-time logic in a throwaway class: don't pollute the
 # module-scope namespace with all these helper variables.
-class _local_scope(object):
-    ERROR   = "*** ERROR:"
+class LocalScope(object):
+    ERROR = "*** ERROR:"
     WARNING = "WARNING:"
-    msgind  = max(len(ERROR), len(WARNING))
-    vermsg  = "\n%s You are running with Python %s.%s.%s." % \
+    msgind = max(len(ERROR), len(WARNING))
+    vermsg = "\n%s You are running with Python %s.%s.%s." % \
                ((msgind*' ',) + sys.version_info[:3])
 
     # We have NOT yet tested autobuild with Python 3!
@@ -61,6 +62,7 @@ class RunHelp(argparse.Action):
         print parser.format_help()
         parser.exit(0)
 
+
 class Version(argparse.Action):
     """
     The argparse action='version' action is almost good, but it produces its
@@ -83,6 +85,7 @@ class Version(argparse.Action):
         formatter.add_text(self.version or parser.version)
         print formatter.format_help()
         parser.exit(message="")
+
 
 class Autobuild(object):
     def __init__(self):
