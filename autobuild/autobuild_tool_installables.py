@@ -28,16 +28,16 @@ Installables are package descriptions which describe dowloadable archives
 that may installed by autobuild.
 """
 
+from __future__ import absolute_import
 import sys
-import os
 import pprint
 import re
 import logging
 
-import common
-import configfile
-import autobuild_base
-from autobuild_tool_install import get_package_file, get_metadata_from_package
+from . import common
+from . import configfile
+from . import autobuild_base
+from .autobuild_tool_install import get_package_file, get_metadata_from_package
 
 logger = logging.getLogger('autobuild.installables')
 
@@ -81,7 +81,6 @@ class AutobuildTool(autobuild_base.AutobuildBase):
      Adds the specified package url using explicit package name, platform, and hash values.
      The specified values must agree with the metadata in the package if it is present, 
      and with the construction of the package file name."""
-
 
     def run(self, args):
         config = configfile.ConfigurationDescription(args.config_file)
@@ -153,16 +152,16 @@ def _get_new_metadata(config, args_name, args_archive, arguments):
 
     package_name = _check_name(args_name, key_values, metadata)
     if metadata.package_description['name'] is None:
-          metadata.package_description['name'] = package_name
+        metadata.package_description['name'] = package_name
 
     for description_key in _PACKAGE_ATTRIBUTES:
         if description_key in key_values:
             logger.warning("specifying '%s' in the installable is no longer required\n  if it is in the package metadata"
                            % description_key)
             if description_key in metadata.package_description \
-              and metadata.package_description[description_key] is not None \
-              and key_values[description_key] != metadata.package_description[description_key]:
-                raise InstallablesError("command line %s (%s) does not match archive %s (%s)" \
+                    and metadata.package_description[description_key] is not None \
+                    and key_values[description_key] != metadata.package_description[description_key]:
+                raise InstallablesError("command line %s (%s) does not match archive %s (%s)"
                                         % (description_key, key_values[description_key], 
                                            description_key, metadata.package_description[description_key]))
             else:
@@ -171,8 +170,8 @@ def _get_new_metadata(config, args_name, args_archive, arguments):
     for archive_key in _ARCHIVE_ATTRIBUTES:
         if archive_key in key_values:
             if archive_key in metadata.archive \
-              and metadata.archive[archive_key] \
-              and key_values[archive_key] != metadata.archive[archive_key]:
+                    and metadata.archive[archive_key] \
+                    and key_values[archive_key] != metadata.archive[archive_key]:
                 raise InstallablesError("command line %s (%s) does not match archive %s (%s)" \
                                         % (archive_key, key_values[archive_key],
                                            archive_key, metadata.archive[archive_key]))
@@ -200,7 +199,7 @@ def _get_new_metadata(config, args_name, args_archive, arguments):
     platform_description.archive = metadata.archive.copy()
 
     _warn_unused(key_values)
-    return (metadata, platform_description)
+    return metadata, platform_description
 
 
 def add(config, args_name, args_archive, arguments):

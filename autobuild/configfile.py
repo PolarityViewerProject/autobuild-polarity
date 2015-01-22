@@ -27,6 +27,7 @@ API to access the autobuild configuration file.
 Author : Alain Linden
 """
 
+from __future__ import absolute_import
 import os
 import itertools
 import pprint
@@ -38,8 +39,8 @@ except ImportError:
     sys.exit("Failed to import llsd via the llbase module; to install, use:\n"
              "  pip install llbase")
 
-import common
-from executable import Executable
+from . import common
+from .executable import Executable
 import logging
 
 logger = logging.getLogger('autobuild.configfile')
@@ -112,7 +113,6 @@ class ConfigurationDescription(common.Serialized):
         """
         Returns the absolute path to the build directory for the platform.
         """
-        build_directory=None
         platform_description = self.get_platform(platform_name)
         common_platform_description = self.package_description.platforms.get('common', None)
         config_directory = os.path.dirname(self.path)
@@ -122,9 +122,9 @@ class ConfigurationDescription(common.Serialized):
             if not os.path.isabs(build_directory):
                 build_directory = os.path.abspath(os.path.join(config_directory, build_directory))
         elif platform_description.build_directory is not None:
-             build_directory = platform_description.build_directory
-             if not os.path.isabs(build_directory):
-                 build_directory = os.path.abspath(os.path.join(config_directory, build_directory))
+            build_directory = platform_description.build_directory
+            if not os.path.isabs(build_directory):
+                build_directory = os.path.abspath(os.path.join(config_directory, build_directory))
         elif common_platform_description is not None and common_platform_description.build_directory is not None:
             build_directory = common_platform_description.build_directory
             if not os.path.isabs(build_directory):
@@ -195,7 +195,7 @@ class ConfigurationDescription(common.Serialized):
             
     def __load(self, path):
         # circular imports, sorry, must import update locally
-        import update
+        from . import update
 
         if os.path.isabs(path):
             self.path = path
@@ -246,6 +246,7 @@ class ConfigurationDescription(common.Serialized):
         else:
             raise ConfigurationError("cannot create configuration file %s" % self.path)
 
+
 class AttrErrorString(str):
     """
     check_package_attributes wants to return a string containing collected
@@ -275,6 +276,7 @@ class AttrErrorString(str):
         super(AttrErrorString, self).__init__()
         self.attrs = attrs
 
+
 def check_package_attributes(container, additional_requirements=[]):
     """
     container may be a ConfigurationDescription or MetadataDescription
@@ -283,7 +285,7 @@ def check_package_attributes(container, additional_requirements=[]):
     str, or query its attrs attribute to discover the specific attributes with
     problems.
     """
-    attrs  = []
+    attrs = []
     errors = []
     required_attributes = ['license', 'license_file', 'copyright', 'name']
     try:
@@ -298,6 +300,7 @@ def check_package_attributes(container, additional_requirements=[]):
                 attrs.append(attribute)
                 errors.append("'%s' not specified in the package_description" % attribute)
     return AttrErrorString(attrs, '\n'.join(errors))
+
 
 class Dependencies(common.Serialized):
     """
@@ -417,7 +420,6 @@ class MetadataDescription(common.Serialized):
             self.__load(parsed_llsd)
             self.update(parsed_llsd)
 
-
     def __load(self, parsed_llsd):
         if (not 'version' in parsed_llsd) or (parsed_llsd['version'] != self.version) \
                 or (not 'type' in parsed_llsd) or (parsed_llsd['type'] != 'metadata'):
@@ -452,7 +454,8 @@ class MetadataDescription(common.Serialized):
             file(self.path, 'wb').write(llsd.format_pretty_xml(_compact_to_dict(self)))
 
 package_selected_platform = None
-            
+
+
 class PackageDescription(common.Serialized):
     """
     Contains the metadata for a single package.
@@ -539,7 +542,7 @@ class PackageDescription(common.Serialized):
         try:
             with open(version_file) as vf:
                 version = vf.read().strip()
-        except IOError, err:
+        except IOError as err:
             raise common.AutobuildError("Can't read version_file '%s': %s" %
                                         (self.version_file, err))
 

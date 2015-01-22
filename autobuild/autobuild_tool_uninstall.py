@@ -32,13 +32,14 @@ Author : Nat Goodspeed
 Date   : 2010-10-19
 """
 
+from __future__ import absolute_import
 import os
 import sys
-import common
+from . import common
 import logging
-import configfile
-import autobuild_base
-from autobuild_tool_install import uninstall
+from . import configfile
+from . import autobuild_base
+from .autobuild_tool_install import uninstall
 
 logger = logging.getLogger('autobuild.uninstall')
 

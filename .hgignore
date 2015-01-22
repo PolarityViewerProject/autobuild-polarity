@@ -5,5 +5,7 @@ dist/
 *.pyc
 *.swp
 virtualenv/
+.idea/
+autobuild.egg-info/
 
 syntax: regexp

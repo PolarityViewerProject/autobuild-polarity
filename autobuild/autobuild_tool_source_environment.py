@@ -20,19 +20,19 @@
 # THE SOFTWARE.
 # $/LicenseInfo$
 
+from __future__ import absolute_import
 import os
 import sys
 from ast import literal_eval
 import logging
 from pprint import pformat
 import re
-import shutil
 import stat
 import subprocess
 import tempfile
 
-import common
-import autobuild_base
+from . import common
+from . import autobuild_base
 
 
 logger = logging.getLogger('autobuild.source_environment')
@@ -58,8 +58,10 @@ if os.path.exists(helper):
         assert sys.path[_helper_idx] == helper
         del sys.path[_helper_idx]
 
+
 class SourceEnvError(common.AutobuildError):
     pass
+
 
 def load_vsvars(vsver):
     key = "VS%sCOMNTOOLS" % vsver

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """\
 @file   test_update.py
 @author Nat Goodspeed
@@ -28,11 +27,12 @@ THE SOFTWARE.
 $/LicenseInfo$
 """
 
+from __future__ import absolute_import
 import re
 from unittest import TestCase
 from nose.tools import *                # assert_equals() et al.
-from basetest import exc
-from patch import patch
+from .basetest import exc
+from .patch import patch
 
 from autobuild import update
 

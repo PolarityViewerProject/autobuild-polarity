@@ -35,6 +35,7 @@ Author : Martin Reddy
 Date   : 2010-04-13
 """
 
+from __future__ import absolute_import
 import os
 import sys
 import time
@@ -42,11 +43,10 @@ import glob
 import itertools
 import logging
 import pprint
-import shutil
 import tempfile
 import argparse
 
-from version import AUTOBUILD_VERSION_STRING
+from .version import AUTOBUILD_VERSION_STRING
 
 logger = logging.getLogger('autobuild.common')
 
@@ -55,16 +55,18 @@ class AutobuildError(RuntimeError):
     pass
 
 # define the supported platforms
-PLATFORM_DARWIN  = 'darwin'
-PLATFORM_DARWIN64  = 'darwin64'
+PLATFORM_DARWIN = 'darwin'
+PLATFORM_DARWIN64 = 'darwin64'
 PLATFORM_WINDOWS = 'windows'
 PLATFORM_WINDOWS64 = 'windows64'
-PLATFORM_LINUX   = 'linux'
-PLATFORM_LINUX64   = 'linux64'
+PLATFORM_LINUX = 'linux'
+PLATFORM_LINUX64 = 'linux64'
 
 DEFAULT_ADDRSIZE = 32
 
-Platform=None
+Platform = None
+
+
 def get_current_platform():
     """
     Return appropriate the autobuild name for the current platform.
@@ -75,11 +77,14 @@ def get_current_platform():
         establish_platform(None) # uses the default for where we are running to set Platform
     return Platform
 
-_build_dir=None
+_build_dir = None
+
+
 def establish_build_dir(directory):
     global _build_dir
     logger.debug("Establishing build dir as '%s'" % directory)
     _build_dir = directory
+
 
 def get_current_build_dir():
     """
@@ -89,6 +94,7 @@ def get_current_build_dir():
     if _build_dir is None:
         raise AutobuildError("No build directory established")
     return _build_dir
+
 
 def build_dir_relative_path(path):
     """
@@ -100,11 +106,12 @@ def build_dir_relative_path(path):
         # ensure that there is a trailing os.pathsep
         # so that when this prefix is stripped below to make the
         # path relative, we don't start with os.pathsep
-        build_dir=os.path.join(get_current_build_dir(),"")
+        build_dir = os.path.join(get_current_build_dir(), "")
         logger.debug("path '%s' build_dir '%s'" % (path, build_dir))
         if path.startswith(build_dir):
-            outpath=path[len(build_dir):]
+            outpath = path[len(build_dir):]
     return outpath
+
 
 def is_system_64bit():
     """
@@ -112,21 +119,22 @@ def is_system_64bit():
     """
     return sys.maxsize > 2**32
 
+
 def establish_platform(specified_platform=None, addrsize=DEFAULT_ADDRSIZE):
     """
     Select the appropriate the autobuild name for the platform.
     """
     global Platform
-    specified_addrsize=addrsize
+    specified_addrsize = addrsize
     if addrsize == 64 and not is_system_64bit():
         logger.warning("This system is not 64 bit capable; using 32 bit address size")
         addrsize = 32
     if specified_platform is not None:
-        Platform=specified_platform
+        Platform = specified_platform
     elif os.environ.get('AUTOBUILD_PLATFORM_OVERRIDE'):
-        Platform=os.environ.get('AUTOBUILD_PLATFORM_OVERRIDE')
+        Platform = os.environ.get('AUTOBUILD_PLATFORM_OVERRIDE')
     elif os.environ.get('AUTOBUILD_PLATFORM'):
-        Platform=os.environ.get('AUTOBUILD_PLATFORM')
+        Platform = os.environ.get('AUTOBUILD_PLATFORM')
     elif sys.platform == 'darwin':
         if addrsize == 64:
             Platform = PLATFORM_DARWIN64
@@ -154,6 +162,7 @@ def establish_platform(specified_platform=None, addrsize=DEFAULT_ADDRSIZE):
     
     return Platform
 
+
 def get_version_tuple(version_string):
     try:
         return tuple(int(v) for v in version_string.split('.'))
@@ -162,7 +171,8 @@ def get_version_tuple(version_string):
         # One or more components might not be int values.
         logger.debug("Can't parse version string %r: %s" % (version_string, err))
         # Treat any unparseable version as "very old"
-        return (0,)
+        return 0,
+
 
 def get_current_user():
     """
@@ -201,7 +211,7 @@ def get_install_cache_dir():
         cache = get_temp_dir("install.cache")
     else:
         if not os.path.exists(cache):
-            os.makedirs(cache, mode=0755)
+            os.makedirs(cache, mode=0o755)
     return cache
 
 
@@ -218,7 +228,7 @@ def get_temp_dir(basename):
     else:
         tmpdir = "/var/tmp/%s/%s" % (user, basename)
     if not os.path.exists(tmpdir):
-        os.makedirs(tmpdir, mode=0755)
+        os.makedirs(tmpdir, mode=0o755)
     return tmpdir
 
 
@@ -298,7 +308,7 @@ def compute_md5(path):
 
     try:
         stream = open(path, 'rb')
-    except IOError, err:
+    except IOError as err:
         raise AutobuildError("Can't compute MD5 for %s: %s" % (path, err))
 
     try:
@@ -477,7 +487,6 @@ def establish_build_id(build_id_arg):
     to the same value.
     """
 
-    build_id = None
     if build_id_arg:
         build_id = build_id_arg
     elif 'AUTOBUILD_BUILD_ID' in os.environ:
