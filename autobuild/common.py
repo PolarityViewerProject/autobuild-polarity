@@ -222,7 +222,7 @@ def get_temp_dir(basename):
     directory exists.
     """
     user = get_current_user()
-    if get_current_platform() == PLATFORM_WINDOWS:
+    if get_current_platform().startswith(PLATFORM_WINDOWS):
         installdir = '%s.%s' % (basename, user)
         tmpdir = os.path.join(tempfile.gettempdir(), installdir)
     else:

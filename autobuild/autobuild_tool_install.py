@@ -81,7 +81,7 @@ If no packages are specified on the command line, then the defaut
 behavior is to install all known archives appropriate for the platform
 specified. You can specify more than one package on the command line.
 
-Supported platforms include: windows, darwin, linux, and a common platform
+Supported platforms include: windows, windows64, darwin, linux, linux64, and a common platform
 to represent a platform-independent package.
 """
 

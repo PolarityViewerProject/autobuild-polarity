@@ -78,7 +78,7 @@ def load_vsvars(vsver):
         raise SourceEnvError("No env variable %s, is Visual Studio %s installed?%s" %
                              (key, vsver, explain))
 
-    if common.get_current_platform() == "windows64":
+    if common.get_current_platform() == common.PLATFORM_WINDOWS64:
         vsvars_path = os.path.join(VSxxxCOMNTOOLS, "..", "..", "VC", "bin", "amd64", "vcvars64.bat")
     else:
         vsvars_path = os.path.join(VSxxxCOMNTOOLS, "vsvars32.bat")
@@ -258,7 +258,7 @@ environment_template = """
     $restore_xtrace
 """
 
-if common.get_current_platform() == "windows" or common.get_current_platform() == "windows64":
+if common.get_current_platform().startswith(common.PLATFORM_WINDOWS):
     windows_template = """
     # disable verbose debugging output
     set +o xtrace
@@ -322,7 +322,7 @@ def do_source_environment(args):
                    'DISTCC_HOSTS': "",
                    }
 
-    if common.get_current_platform() == "windows" or common.get_current_platform() == "windows64":
+    if common.get_current_platform().startswith(common.PLATFORM_WINDOWS):
         try:
             # reset stdout in binary mode so sh doesn't get confused by '\r'
             import msvcrt
