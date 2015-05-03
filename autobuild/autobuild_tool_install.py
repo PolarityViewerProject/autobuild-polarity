@@ -944,7 +944,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
         utf8_writer = codecs.getwriter('utf8')
         sys.stdout = utf8_writer(sys.stdout)
 
-        platform = common.establish_platform(args.platform, addrsize=args.addrsize)
+        platform = common.establish_platform(args.platform, args.addrsize)
         logger.debug("installing platform "+platform)
 
         # load the list of packages to install

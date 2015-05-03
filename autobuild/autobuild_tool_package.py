@@ -132,7 +132,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
 
     def run(self, args):
         logger.debug("loading " + args.autobuild_filename)
-        platform = common.establish_platform(args.platform, addrsize=args.addrsize)
+        platform = common.establish_platform(args.platform, args.addrsize)
         if args.clean_only:
             logger.info("packaging with --clean-only required")
         if args.check_license:

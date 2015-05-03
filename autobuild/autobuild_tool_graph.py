@@ -136,7 +136,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             help='save the dot input file in the specified file')
 
     def run(self, args):
-        platform = common.establish_platform(args.platform, addrsize=args.addrsize)
+        platform = common.establish_platform(args.platform, args.addrsize)
         metadata = None
         incomplete = ''
         if not args.source_file:

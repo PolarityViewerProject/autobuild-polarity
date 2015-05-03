@@ -73,7 +73,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             help="an option to pass to the configuration command")
 
     def run(self, args):
-        platform = common.establish_platform(args.platform, addrsize=args.addrsize)
+        platform = common.establish_platform(args.platform, args.addrsize)
         common.establish_build_id(args.build_id)  # sets id (even if not specified),
                                                   # and stores in the AUTOBUILD_BUILD_ID environment variable
         config = configfile.ConfigurationDescription(args.config_file)

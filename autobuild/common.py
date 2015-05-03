@@ -120,15 +120,18 @@ def is_system_64bit():
     return sys.maxsize > 2**32
 
 
-def establish_platform(specified_platform=None, addrsize=DEFAULT_ADDRSIZE):
+def establish_platform(specified_platform=None, specified_address_size=None):
     """
     Select the appropriate the autobuild name for the platform.
     """
     global Platform
-    specified_addrsize = addrsize
-    if addrsize == 64 and not is_system_64bit():
+
+    if specified_address_size is None:
+        specified_address_size = DEFAULT_ADDRSIZE
+
+    if specified_address_size == 64 and not is_system_64bit():
         logger.warning("This system is not 64 bit capable; using 32 bit address size")
-        addrsize = 32
+        specified_address_size = 32
     if specified_platform is not None:
         Platform = specified_platform
     elif os.environ.get('AUTOBUILD_PLATFORM_OVERRIDE'):
@@ -136,29 +139,29 @@ def establish_platform(specified_platform=None, addrsize=DEFAULT_ADDRSIZE):
     elif os.environ.get('AUTOBUILD_PLATFORM'):
         Platform = os.environ.get('AUTOBUILD_PLATFORM')
     elif sys.platform == 'darwin':
-        if addrsize == 64:
+        if specified_address_size == 64:
             Platform = PLATFORM_DARWIN64
         else:
             Platform = PLATFORM_DARWIN
     elif sys.platform == 'linux2':
-        if addrsize == 64:
+        if specified_address_size == 64:
             Platform = PLATFORM_LINUX64
         else:
             Platform = PLATFORM_LINUX
     elif sys.platform == 'win32' or sys.platform == 'cygwin':  
-        if addrsize == 64:
+        if specified_address_size == 64:
             Platform = PLATFORM_WINDOWS64
         else:
             Platform = PLATFORM_WINDOWS
     else:
         AutobuildError("unrecognized platform '%s'" % sys.platform)
 
-    os.environ['AUTOBUILD_ADDRSIZE'] = str(addrsize) # for spawned commands
+    os.environ['AUTOBUILD_ADDRSIZE'] = str(specified_address_size) # for spawned commands
     os.environ['AUTOBUILD_PLATFORM'] = Platform # for spawned commands
     os.environ['AUTOBUILD_PLATFORM_OVERRIDE'] = Platform # for recursive invocations
 
     logger.debug("Specified platform %s address-size %d: result %s" \
-                 % (specified_platform, specified_addrsize, Platform))
+                 % (specified_platform, specified_address_size, Platform))
     
     return Platform
 

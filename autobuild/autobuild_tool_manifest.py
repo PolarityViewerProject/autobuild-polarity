@@ -60,7 +60,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
         parser.add_argument('pattern', nargs='*', help='a file pattern')
 
     def run(self, args):
-        platform = common.establish_platform(args.platform, addrsize=args.addrsize)
+        platform = common.establish_platform(args.platform, args.addrsize)
         config = configfile.ConfigurationDescription(args.config_file)
         if args.command == 'add':
             [add(config, platform, p) for p in args.pattern]
