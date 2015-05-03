@@ -849,7 +849,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
             default=configfile.INSTALLED_CONFIG_FILE,
             dest='installed_filename',
             help='The file used to record what is installed.')
-        parser.add_argument('--address-size', choices=[32,64], type=int,
+        parser.add_argument('--address-size', '-m', choices=[32,64], type=int,
                             default=int(os.environ.get('AUTOBUILD_ADDRSIZE',common.DEFAULT_ADDRSIZE)),
                             dest='addrsize',
                             help='specify address size (modifies platform)')

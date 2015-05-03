@@ -104,7 +104,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             help="specify build configuration\n(may be specified in $AUTOBUILD_CONFIGURATION)",
                             metavar='CONFIGURATION',
                             default=self.configurations_from_environment())
-        parser.add_argument('--address-size', choices=[32, 64], type=int,
+        parser.add_argument('--address-size', '-m', choices=[32, 64], type=int,
                             default=int(os.environ.get('AUTOBUILD_ADDRSIZE', common.DEFAULT_ADDRSIZE)),
                             dest='addrsize',
                             help='specify address size (modifies platform)')
