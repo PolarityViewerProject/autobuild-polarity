@@ -333,7 +333,7 @@ def do_source_environment(args):
 
         # load vsvars32.bat variables
         # *TODO - find a way to configure this instead of hardcoding default
-        vs_ver = os.environ.get('AUTOBUILD_VSVER', '120')
+        vs_ver = os.environ.get('AUTOBUILD_VSVER', '140')
         vsvars = load_vsvars(vs_ver)
         exports = []
         # We don't know which environment variables might be modified by
