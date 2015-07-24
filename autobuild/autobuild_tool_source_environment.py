@@ -267,31 +267,21 @@ if common.get_current_platform().startswith(common.PLATFORM_WINDOWS):
     build_vcproj() {
         local vcproj=$1
         local config=$2
+        local platform=$3
 
-        if (($USE_INCREDIBUILD)) ; then
-            BuildConsole "$vcproj" /CFG="$config"
-        else
-            devenv "$vcproj" /build "$config"
-        fi
+        msbuild.exe "$(cygpath -m "$vcproj")" /p:Configuration="$config" /p:Platform="$platform" /m
     }
 
     build_sln() {
         local solution=$1
         local config=$2
-        local proj=$3
+        local platform=$3
+        local proj=$4
 
-        if (($USE_INCREDIBUILD)) ; then
-            if [ -z "$proj" ] ; then
-                BuildConsole "$solution" /CFG="$config"
-            else
-                BuildConsole "$solution" /PRJ="$proj" /CFG="$config"
-            fi
+        if [ -z "$proj" ] ; then
+            msbuild.exe "$(cygpath -m "$solution")" /p:Configuration="$config" /p:Platform="$platform" /m
         else
-            if [ -z "$proj" ] ; then
-                devenv.com "$(cygpath -m "$solution")" /build "$config"
-            else
-                devenv.com "$(cygpath -m "$solution")" /build "$config" /project "$proj"
-            fi
+            msbuild.exe "$(cygpath -m "$solution")" /t:"$proj" /p:Configuration="$config" /p:Platform="$platform" /m
         fi
     }
 
