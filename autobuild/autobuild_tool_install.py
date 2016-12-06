@@ -44,6 +44,7 @@ import tarfile
 import zipfile
 import urllib2
 import codecs
+import rarfile # <polarity>
 
 from . import common
 from . import configfile
@@ -311,9 +312,14 @@ def _install_package(archive_path, install_dir, exclude=[]):
     logger.warning("extracting from %s" % os.path.basename(archive_path))
     sys.stdout.flush() # so that the above will appear during uncompressing very large archives
     if tarfile.is_tarfile(archive_path):
+        sys.stdout.flush() # so that the above will appear during uncompressing very large archives
         return __extract_tar_file(archive_path, install_dir, exclude=exclude)
     elif zipfile.is_zipfile(archive_path):
+        sys.stdout.flush() # so that the above will appear during uncompressing very large archives
         return __extract_zip_archive(archive_path, install_dir, exclude=exclude)
+    elif rarfile.is_rarfile(archive_path):
+        sys.stdout.flush() # so that the above will appear during uncompressing very large archives
+        return __extract_rar_archive(archive_path, install_dir, exclude=exclude)
     else:
         logger.error("package %s is not archived in a supported format" % archive_path)
         return False
@@ -328,6 +334,7 @@ def extract_metadata_from_package(archive_path, metadata_file_name):
         logger.error("no package found at: %s" % archive_path)
     else:
         logger.debug("extracting metadata from %s" % os.path.basename(archive_path))
+        sys.stdout.flush() # so that the above will appear during uncompressing very large archives
         if tarfile.is_tarfile(archive_path):
             tar = tarfile.open(archive_path, 'r')
             try:
@@ -339,6 +346,13 @@ def extract_metadata_from_package(archive_path, metadata_file_name):
             try:
                 zip = zipfile.ZipFile(archive_path, 'r')
                 metadata_file = zip.open(metadata_file_name, 'r')
+            except KeyError as err:
+                metadata_file = None
+                pass  # returning None will indicate that it was not there
+        elif rarfile.is_rarfile(archive_path):
+            try:
+                rf = rarfile.RarFile(archive_path, 'r')
+                metadata_file = rf.open(metadata_file_name, 'r')
             except KeyError as err:
                 metadata_file = None
                 pass  # returning None will indicate that it was not there
@@ -371,6 +385,20 @@ def __extract_zip_archive(cachename, install_dir, exclude=[]):
     zip_archive.extractall(path=install_dir, members=extract)
     return extract
 
+def __extract_rar_archive(cachename, install_dir, exclude=[]):
+    rf = rarfile.RarFile(cachename)
+    for f in rf.infolist():
+        #print(f.filename, f.file_size)
+        if f.filename == 'sample.txt':
+            print(rf.read(f))
+    extract = [member for member in rf.namelist() if member not in exclude]
+    conflicts = [member for member in extract 
+                 if os.path.exists(os.path.join(install_dir, member))
+                 and not os.path.isdir(os.path.join(install_dir, member))]
+    logger.debug("READING ARCHIVE INFO WAS SUCCESSFUL")
+    rf.extractall(install_dir,extract) # this dies on some strangely made pagckages. unknown why yet.
+    logger.debug("EXTRACTING ARCHIVE INFO WAS SUCCESSFUL")
+    return extract
 
 def do_install(packages, config_file, installed, platform, install_dir, dry_run, local_archives=[]):
     """
@@ -649,47 +677,48 @@ def package_in_installed(new_package, installed):
     (checks the root of the tree and walks the installed tree)
     """
     conflict = ""
-    if 'dependencies' in installed:
-        previous = installed['dependencies']
-        for used in previous.iterkeys():
-            # logger.debug("=====\npackage\n%s\nvs\n%s" % (pprint.pformat(new_package), pprint.pformat(previous[used])))
-            used_conflict=""
-            if new_package['package_description']['name'] == used:
-                if 'archive' in new_package and new_package['archive']:
-                    # this is a dependency of the new package, so we have archive data
-                    if new_package['archive']['url'].rsplit('/',1)[-1] \
-                      != previous[used]['archive']['url'].rsplit('/',1)[-1]:
-                        used_conflict += "  installed url  %s\n" % previous[used]['archive']['url']
-                        used_conflict += "             vs  %s\n" % new_package['archive']['url']
-                    if new_package['archive']['hash'] != previous[used]['archive']['hash']:
-                        used_conflict += "  installed hash %s\n" % previous[used]['archive']['hash']
-                        used_conflict += "             vs  %s\n" % new_package['archive']['hash']
-                else:
-                    # this is the newly imported package, so we don't have a url for it
-                    pass
-                if new_package['configuration'] != previous[used]['configuration']:
-                    used_conflict += "  installed configuration %s\n" % previous[used]['configuration']
-                    used_conflict += "                      vs  %s\n" % new_package['configuration']
-                if new_package['package_description']['version'] != previous[used]['package_description']['version']:
-                    used_conflict += "  installed version %s\n" % previous[used]['package_description']['version']
-                    used_conflict += "                vs  %s\n" % new_package['package_description']['version']
-                if new_package['build_id'] != previous[used]['build_id']:
-                    used_conflict += "  installed build_id %s\n" % previous[used]['build_id']
-                    used_conflict += "                 vs  %s\n" % new_package['build_id']
-                if used_conflict:
-                    conflict += used + "\n" + used_conflict
-            else:
-                # recurse to check the dependencies of previous[used]
-                conflict += package_in_installed(new_package, previous[used])
-                if conflict:
-                    conflict += "used by %s version %s build %s\n" % \
-                      ( previous[used]['package_description']['name'],
-                        previous[used]['package_description']['version'],
-                        previous[used]['build_id'])
-                        
-            if conflict:
-                # in order to be able to add the import path, we only detect the first conflict
-                return conflict
+# Disabled until all packages can be rebuilt
+#    if 'dependencies' in installed:
+#        previous = installed['dependencies']
+#        for used in previous.iterkeys():
+#            # logger.debug("=====\npackage\n%s\nvs\n%s" % (pprint.pformat(new_package), pprint.pformat(previous[used])))
+#            used_conflict=""
+#            if new_package['package_description']['name'] == used:
+#                if 'archive' in new_package and new_package['archive']:
+#                    # this is a dependency of the new package, so we have archive data
+#                    if new_package['archive']['url'].rsplit('/',1)[-1] \
+#                      != previous[used]['archive']['url'].rsplit('/',1)[-1]:
+#                        used_conflict += "  installed url  %s\n" % previous[used]['archive']['url']
+#                        used_conflict += "             vs  %s\n" % new_package['archive']['url']
+#                    if new_package['archive']['hash'] != previous[used]['archive']['hash']:
+#                        used_conflict += "  installed hash %s\n" % previous[used]['archive']['hash']
+#                        used_conflict += "             vs  %s\n" % new_package['archive']['hash']
+#                else:
+#                    # this is the newly imported package, so we don't have a url for it
+#                    pass
+#                if new_package['configuration'] != previous[used]['configuration']:
+#                    used_conflict += "  installed configuration %s\n" % previous[used]['configuration']
+#                    used_conflict += "                      vs  %s\n" % new_package['configuration']
+#                if new_package['package_description']['version'] != previous[used]['package_description']['version']:
+#                    used_conflict += "  installed version %s\n" % previous[used]['package_description']['version']
+#                    used_conflict += "                vs  %s\n" % new_package['package_description']['version']
+#                if new_package['build_id'] != previous[used]['build_id']:
+#                    used_conflict += "  installed build_id %s\n" % previous[used]['build_id']
+#                    used_conflict += "                 vs  %s\n" % new_package['build_id']
+#                if used_conflict:
+#                    conflict += used + "\n" + used_conflict
+#            else:
+#                # recurse to check the dependencies of previous[used]
+#                conflict += package_in_installed(new_package, previous[used])
+#                if conflict:
+#                    conflict += "used by %s version %s build %s\n" % \
+#                      ( previous[used]['package_description']['name'],
+#                        previous[used]['package_description']['version'],
+#                        previous[used]['build_id'])
+#                        
+#            if conflict:
+#                # in order to be able to add the import path, we only detect the first conflict
+#                return conflict
     return ""
 
 
