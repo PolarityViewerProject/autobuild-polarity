@@ -101,7 +101,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Run unit autobuild unit tests', prog='runtest')
 
-    parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0.3')
 
 #-------------------------
 # simple version:

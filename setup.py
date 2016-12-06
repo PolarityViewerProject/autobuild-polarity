@@ -31,7 +31,7 @@ import os.path
 # Version twiddling
 # Each time we rebuild an autobuild package, manually increment the "build
 # number" here, e.g. 0.8.1, 0.8.2, etc.
-BUILD = 2
+BUILD = 3
 # But suppose we update our repository with new source and the version number
 # embedded in the package itself changes, e.g. from 0.8 to 0.9 -- but we don't
 # notice, simply incrementing the build number? The package build we expected
@@ -52,8 +52,8 @@ VERSION_WHEN_LAST_PACKAGED = "1.0"
 # from autobuild.common import AUTOBUILD_VERSION_STRING
 execfile(os.path.join("autobuild", "version.py"))
 # The previous execfile better have defined AUTOBUILD_VERSION_STRING...
-if AUTOBUILD_VERSION_STRING != VERSION_WHEN_LAST_PACKAGED:
-    BUILD = 1
+# if AUTOBUILD_VERSION_STRING != VERSION_WHEN_LAST_PACKAGED:
+    # BUILD = 1
 
 
 PACKAGE_NAME = 'autobuild'
@@ -73,7 +73,8 @@ ext_modules = []
 
 setup(
     name=PACKAGE_NAME,
-    version="%s.%s" % (AUTOBUILD_VERSION_STRING, BUILD),
+    # version="%s.%s" % (AUTOBUILD_VERSION_STRING, BUILD),
+    version="%s" % (AUTOBUILD_VERSION_STRING),
     author='Oz Linden, Cinder Roxley',
     author_email='cinder@alchemyviewer.org',
     url="http://wiki.secondlife.com/wiki/Autobuild",
