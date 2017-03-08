@@ -79,9 +79,9 @@ def load_vsvars(vsver):
                              (key, vsver, explain))
 
     if common.get_current_platform() == common.PLATFORM_WINDOWS64:
-        vsvars_path = os.path.join(VSxxxCOMNTOOLS, "..", "..", "VC", "bin", "amd64", "vcvars64.bat")
+        vsvars_path = os.path.join(VSxxxCOMNTOOLS, "..", "..", "VC", "Auxiliary", "Build", "vcvars64.bat")
     else:
-        vsvars_path = os.path.join(VSxxxCOMNTOOLS, "vsvars32.bat")
+        vsvars_path = os.path.join(VSxxxCOMNTOOLS, "..", "..", "VC", "Auxiliary", "Build", "vcvars32.bat")
 
     # Invent a temp filename into which to capture our script output. Some
     # versions of vsvars32.bat emit stdout, some don't; we've been bitten both
@@ -323,7 +323,7 @@ def do_source_environment(args):
 
         # load vsvars32.bat variables
         # *TODO - find a way to configure this instead of hardcoding default
-        vs_ver = os.environ.get('AUTOBUILD_VSVER', '140')
+        vs_ver = os.environ.get('AUTOBUILD_VSVER', '150')
         vsvars = load_vsvars(vs_ver)
         exports = []
         # We don't know which environment variables might be modified by
