@@ -1,17 +1,17 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 # $LicenseInfo:firstyear=2010&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -65,7 +65,7 @@ logger = logging.getLogger('autobuild.package')
 #
 # Talking to remote servers
 #
-boolopt=re.compile("true$", re.I)
+boolopt = re.compile("true$", re.I)
 
 
 class AutobuildTool(autobuild_base.AutobuildBase):
@@ -83,8 +83,9 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             default=None,
                             dest='archive_filename',
                             help='the filename of the archive that autobuild will create')
-        parser.add_argument('--address-size', '-m', choices=[32,64], type=int,
-                            default=int(os.environ.get('AUTOBUILD_ADDRSIZE',common.DEFAULT_ADDRSIZE)),
+        parser.add_argument('--address-size', '-m', choices=[32, 64], type=int,
+                            default=int(os.environ.get(
+                                'AUTOBUILD_ADDRSIZE', common.DEFAULT_ADDRSIZE)),
                             dest='addrsize',
                             help='specify address size (modifies platform)')
         parser.add_argument('-p', '--platform',
@@ -111,7 +112,8 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             help="package all configurations")
         parser.add_argument('--clean-only',
                             action="store_true",
-                            default=True if 'AUTOBUILD_CLEAN_ONLY' in os.environ and boolopt.match(os.environ['AUTOBUILD_CLEAN_ONLY']) else False,
+                            default=True if 'AUTOBUILD_CLEAN_ONLY' in os.environ and boolopt.match(
+                                os.environ['AUTOBUILD_CLEAN_ONLY']) else False,
                             dest='clean_only',
                             help="require that the package not depend on installables that are local or lack metadata\n"
                             + "  may also be set by defining the environment variable AUTOBUILD_CLEAN_ONLY"
@@ -121,7 +123,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
                             default=False,
                             dest='list_depends',
                             help="return success if the package contains no dependencies that either are local or lack metadata")
-        parser.add_argument('--configuration', '-c', nargs='?', action="append", dest='configurations', 
+        parser.add_argument('--configuration', '-c', nargs='?', action="append", dest='configurations',
                             help="package a specific build configuration\n(may be specified as comma separated values in $AUTOBUILD_CONFIGURATION)",
                             metavar='CONFIGURATION',
                             default=self.configurations_from_environment())
@@ -136,7 +138,8 @@ class AutobuildTool(autobuild_base.AutobuildBase):
         if args.clean_only:
             logger.info("packaging with --clean-only required")
         if args.check_license:
-            logger.warning("The --skip-license-check option is deprecated; it now has no effect")
+            logger.warning(
+                "The --skip-license-check option is deprecated; it now has no effect")
         if not args.dry_run and args.results_file and os.path.exists(args.results_file):
             logger.debug("clearing previous results: %s" % args.results_file)
             os.remove(args.results_file)
@@ -169,30 +172,35 @@ def package(config, build_directory, platform_name, archive_filename=None, archi
         raise PackageError("no package name specified in configuration")
     if not package_description.license:
         raise PackageError("no license specified in configuration")
-##  autobuild.xml's version_file is validated by build subcommand.
-##  By this time we should only have to validate metadata package version;
-##  this happens a few lines down, after reading metadata_file.
-##  if not package_description.version_file:
+# autobuild.xml's version_file is validated by build subcommand.
+# By this time we should only have to validate metadata package version;
+# this happens a few lines down, after reading metadata_file.
+# if not package_description.version_file:
 ##      raise PackageError("no version file specified in configuration")
     if not os.path.isdir(build_directory):
-        raise PackageError("build directory %s is not a directory" % build_directory)
+        raise PackageError(
+            "build directory %s is not a directory" % build_directory)
     logger.info("packaging from %s" % build_directory)
     platform_description = config.get_platform(platform_name)
     files, missing = _get_file_list(platform_description, build_directory)
     if platform_name != 'common':
         try:
-            common_files, common_missing = _get_file_list(config.get_platform('common'), build_directory)
+            common_files, common_missing = _get_file_list(
+                config.get_platform('common'), build_directory)
             files |= common_files
             missing.extend(common_missing)
         except configfile.ConfigurationError:
             pass  # We don't have a common platform defined, that is ok.
     if missing:
-        raise PackageError("No files matched manifest specifiers:\n"+'\n'.join(missing))
+        raise PackageError(
+            "No files matched manifest specifiers:\n" + '\n'.join(missing))
 
-    # add the manifest files to the metadata file (list does not include itself)
+    # add the manifest files to the metadata file (list does not include
+    # itself)
     metadata_file_name = configfile.PACKAGE_METADATA_FILE
     logger.debug("metadata file name: %s" % metadata_file_name)
-    metadata_file_path = os.path.abspath(os.path.join(build_directory, metadata_file_name))
+    metadata_file_path = os.path.abspath(
+        os.path.join(build_directory, metadata_file_name))
     metadata_file = configfile.MetadataDescription(path=metadata_file_path)
     if metadata_file.dirty:
         if clean_only:
@@ -232,23 +240,29 @@ def package(config, build_directory, platform_name, archive_filename=None, archi
             try:
                 results = open(results_file, 'wb')
             except IOError as err:
-                raise PackageError("Unable to open results file %s:\n%s" % (results_file, err))
-            results.write('autobuild_package_name="%s"\n' % package_description.name)
-            results.write('autobuild_package_clean=%s\n' % ("false" if metadata_file.dirty else "true"))
+                raise PackageError(
+                    "Unable to open results file %s:\n%s" % (results_file, err))
+            results.write('autobuild_package_name="%s"\n' %
+                          package_description.name)
+            results.write('autobuild_package_clean=%s\n' %
+                          ("false" if metadata_file.dirty else "true"))
         metadata_file.save()
 
-    # add the metadata file name to the list of files _after_ putting that list in the metadata
+    # add the metadata file name to the list of files _after_ putting that
+    # list in the metadata
     files.add(metadata_file_name)
 
     config_directory = os.path.dirname(config.path)
     if not archive_filename:
         tardir = config_directory
-        tarname = _generate_archive_name(metadata_file.package_description, build_id, platform_name)
+        tarname = _generate_archive_name(
+            metadata_file.package_description, build_id, platform_name)
         tarfilename = os.path.join(tardir, tarname)
     elif os.path.isabs(archive_filename):
         tarfilename = archive_filename
     else:
-        tarfilename = os.path.abspath(os.path.join(config_directory, archive_filename))
+        tarfilename = os.path.abspath(
+            os.path.join(config_directory, archive_filename))
     logger.debug(tarfilename)
     if dry_run:
         for f in files:
@@ -257,9 +271,11 @@ def package(config, build_directory, platform_name, archive_filename=None, archi
         archive_description = platform_description.archive
         format = _determine_archive_format(archive_format, archive_description)
         if format == 'tbz2':
-            _create_tarfile(tarfilename + '.tar.bz2', build_directory, files, results)
+            _create_tarfile(tarfilename + '.tar.bz2',
+                            build_directory, files, results)
         elif format == 'zip':
-            _create_zip_archive(tarfilename + '.zip', build_directory, files, results)
+            _create_zip_archive(tarfilename + '.zip',
+                                build_directory, files, results)
         else:
             raise PackageError("archive format %s is not supported" % format)
     if not dry_run and results:
@@ -283,10 +299,10 @@ def _generate_archive_name(package_description, build_id, platform_name, suffix=
     package_name = package_description.name.replace('-', '_')
     platform_name = platform_name.replace('/', '_').replace('-', '_')
     name = package_name \
-           + '-' + package_description.version \
-           + '-' + platform_name \
-           + '-' + build_id \
-           + suffix
+        + '-' + package_description.version \
+        + '-' + platform_name \
+        + '-' + build_id \
+        + suffix
     return name
 
 
@@ -319,18 +335,22 @@ def _create_tarfile(tarfilename, build_directory, filelist, results):
             try:
                 # Make sure permissions are set on Windows.
                 if common.get_current_platform().startswith(common.PLATFORM_WINDOWS):
-                    command = ["CACLS", file, "/T", "/G", getpass.getuser() + ":F"]
-                    CACLS = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    command = ["CACLS", file, "/T",
+                               "/G", getpass.getuser() + ":F"]
+                    CACLS = subprocess.Popen(
+                        command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     output = CACLS.communicate("Y")[0]
                     rc = CACLS.wait()
                     if rc != 0:
-                        print("error: rc %s from %s:" % (rc, ' '.join(command)))
+                        print("error: rc %s from %s:" %
+                              (rc, ' '.join(command)))
                     print(output)
                 tfile.add(file)
                 logger.info('added ' + file)
             except (tarfile.TarError, IOError) as err:
                 # IOError in case the specified filename can't be opened
-                raise PackageError("unable to add %s to %s: %s" % (file, tarfilename, err))
+                raise PackageError("unable to add %s to %s: %s" %
+                                   (file, tarfilename, err))
         tfile.close()
     finally:
         os.chdir(current_directory)
@@ -352,7 +372,8 @@ def _create_zip_archive(archive_filename, build_directory, file_list, results):
         archive = ZipFile(archive_filename, 'w', ZIP_DEFLATED)
         added_files = set()
         for file in file_list:
-            _add_file_to_zip_archive(archive, file, archive_filename, added_files)
+            _add_file_to_zip_archive(
+                archive, file, archive_filename, added_files)
         archive.close()
     finally:
         os.chdir(current_directory)
@@ -376,7 +397,8 @@ def _add_file_to_zip_archive(zip_file, unnormalized_file, archive_filename, adde
     added_files.add(lowerfile)
     if os.path.isdir(file):
         for f in os.listdir(file):
-            _add_file_to_zip_archive(zip_file, os.path.join(file, f), archive_filename, added_files)
+            _add_file_to_zip_archive(zip_file, os.path.join(
+                file, f), archive_filename, added_files)
     else:
         try:
             zip_file.write(file)

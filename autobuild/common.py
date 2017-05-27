@@ -1,17 +1,17 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 # $LicenseInfo:firstyear=2010&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -54,6 +54,7 @@ logger = logging.getLogger('autobuild.common')
 class AutobuildError(RuntimeError):
     pass
 
+
 # define the supported platforms
 PLATFORM_DARWIN = 'darwin'
 PLATFORM_DARWIN64 = 'darwin64'
@@ -74,8 +75,10 @@ def get_current_platform():
     global Platform
     if Platform is None:
         logger.debug("platform recurse")
-        establish_platform(None) # uses the default for where we are running to set Platform
+        # uses the default for where we are running to set Platform
+        establish_platform(None)
     return Platform
+
 
 _build_dir = None
 
@@ -101,7 +104,7 @@ def build_dir_relative_path(path):
     Returns a relative path derived from the input path rooted at the configuration file's
     directory when the input is an absolute path.
     """
-    outpath=path
+    outpath = path
     if os.path.isabs(path):
         # ensure that there is a trailing os.pathsep
         # so that when this prefix is stripped below to make the
@@ -130,7 +133,8 @@ def establish_platform(specified_platform=None, specified_address_size=None):
         specified_address_size = DEFAULT_ADDRSIZE
 
     if specified_address_size == 64 and not is_system_64bit():
-        logger.warning("This system is not 64 bit capable; using 32 bit address size")
+        logger.warning(
+            "This system is not 64 bit capable; using 32 bit address size")
         specified_address_size = 32
     if specified_platform is not None:
         Platform = specified_platform
@@ -148,7 +152,7 @@ def establish_platform(specified_platform=None, specified_address_size=None):
             Platform = PLATFORM_LINUX64
         else:
             Platform = PLATFORM_LINUX
-    elif sys.platform == 'win32' or sys.platform == 'cygwin':  
+    elif sys.platform == 'win32' or sys.platform == 'cygwin':
         if specified_address_size == 64:
             Platform = PLATFORM_WINDOWS64
         else:
@@ -156,13 +160,15 @@ def establish_platform(specified_platform=None, specified_address_size=None):
     else:
         AutobuildError("unrecognized platform '%s'" % sys.platform)
 
-    os.environ['AUTOBUILD_ADDRSIZE'] = str(specified_address_size) # for spawned commands
-    os.environ['AUTOBUILD_PLATFORM'] = Platform # for spawned commands
-    os.environ['AUTOBUILD_PLATFORM_OVERRIDE'] = Platform # for recursive invocations
+    os.environ['AUTOBUILD_ADDRSIZE'] = str(
+        specified_address_size)  # for spawned commands
+    os.environ['AUTOBUILD_PLATFORM'] = Platform  # for spawned commands
+    # for recursive invocations
+    os.environ['AUTOBUILD_PLATFORM_OVERRIDE'] = Platform
 
-    logger.debug("Specified platform %s address-size %d: result %s" \
+    logger.debug("Specified platform %s address-size %d: result %s"
                  % (specified_platform, specified_address_size, Platform))
-    
+
     return Platform
 
 
@@ -172,7 +178,8 @@ def get_version_tuple(version_string):
     except (AttributeError, ValueError) as err:
         # version_string might not have a split() method: might not be str.
         # One or more components might not be int values.
-        logger.debug("Can't parse version string %r: %s" % (version_string, err))
+        logger.debug("Can't parse version string %r: %s" %
+                     (version_string, err))
         # Treat any unparseable version as "very old"
         return 0,
 
@@ -284,7 +291,8 @@ def find_executable(executables, exts=None):
     if isinstance(executables, basestring):
         executables = [executables]
     if exts is None:
-        exts = sys.platform.startswith("win") and [".com", ".exe", ".bat", ".cmd"] or []
+        exts = sys.platform.startswith(
+            "win") and [".com", ".exe", ".bat", ".cmd"] or []
     # The original implementation iterated over directories in PATH, checking
     # for each name in 'executables' in a given directory. This makes
     # intuitive sense -- but it's wrong. When 'executables' is (e.g.) ['foobar',
@@ -363,7 +371,7 @@ def split_tarname(pathname):
     if len(fileparts) > 4:
         fileparts[1:-2] = ['-'.join(fileparts[1:-2])]
     if len(fileparts) < 4:
-        raise AutobuildError("Incompatible archive name '%s' lacks some components" \
+        raise AutobuildError("Incompatible archive name '%s' lacks some components"
                              % filename)
     return dir, fileparts, ext
 
@@ -475,7 +483,8 @@ def select_configurations(args, config, verb):
                           for name in args.configurations]
     else:
         configurations = config.get_default_build_configurations(platform)
-    logger.debug("%s configuration(s) %s" % (verb, pprint.pformat(configurations)))
+    logger.debug("%s configuration(s) %s" %
+                 (verb, pprint.pformat(configurations)))
     return configurations
 
 
@@ -499,5 +508,3 @@ def establish_build_id(build_id_arg):
         logger.warn("Warning: no --id argument or AUTOBUILD_BUILD_ID environment variable specified;\n    using the date and time (%s), which may not be unique" % build_id)
     os.environ['AUTOBUILD_BUILD_ID'] = build_id
     return build_id
-
-

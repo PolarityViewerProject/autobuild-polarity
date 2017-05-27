@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 """\
 @file   hash_algorithms.py
 @author Nat Goodspeed
@@ -48,6 +48,7 @@ class hash_algorithm(object):
         ...
     """
     # called when we instantiate @hash_algorithm("md5")
+
     def __init__(self, key):
         self.key = key
 

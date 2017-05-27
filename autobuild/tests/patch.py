@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 """\
 @file   patch.py
 @author Nat Goodspeed
@@ -47,10 +47,10 @@ def patch(module, attribute, value):
         saved = getattr(module, attribute)
     except AttributeError:
         # doesn't exist, we're adding it, so delete it later
-        restore = lambda: delattr(module, attribute)
+        def restore(): return delattr(module, attribute)
     else:
         # 'saved' is prev value, so reset to 'saved' later
-        restore = lambda: setattr(module, attribute, saved)
+        def restore(): return setattr(module, attribute, saved)
 
     try:
         # set the desired module attribute

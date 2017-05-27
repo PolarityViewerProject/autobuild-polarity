@@ -1,16 +1,17 @@
+#!/usr/bin/env python2
 # $LicenseInfo:firstyear=2010&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -51,10 +52,11 @@ class TestConfigFile(BaseTest, AutobuildBaselineCompare):
         platform.configurations['common'] = build_configuration
         config.package_description.platforms['common'] = platform
         config.save()
-        
+
         reloaded = configfile.ConfigurationDescription(tmp_file)
         assert reloaded.package_description.platforms['common'].build_directory == '.'
-        assert reloaded.package_description.platforms['common'].configurations['common'].build.get_command() == 'gcc'
+        assert reloaded.package_description.platforms['common'].configurations['common'].build.get_command(
+        ) == 'gcc'
 
     def test_configuration_inherit(self):
         tmp_file = self.get_tmp_file(4)
@@ -79,12 +81,15 @@ class TestConfigFile(BaseTest, AutobuildBaselineCompare):
         config.package_description.platforms['darwin'] = darwin_platform
 
         config.save()
-        
+
         reloaded = configfile.ConfigurationDescription(tmp_file)
-        assert reloaded.get_platform('common').build_directory == 'common_build'
-        assert reloaded.get_platform('darwin').build_directory == 'darwin_build'
-        # check that we fall back to the 32 bit version if no 64 bit is found        
-        assert reloaded.get_platform('darwin64').build_directory == 'darwin_build'
+        assert reloaded.get_platform(
+            'common').build_directory == 'common_build'
+        assert reloaded.get_platform(
+            'darwin').build_directory == 'darwin_build'
+        # check that we fall back to the 32 bit version if no 64 bit is found
+        assert reloaded.get_platform(
+            'darwin64').build_directory == 'darwin_build'
 
     def tearDown(self):
         self.cleanup_tmp_file()
@@ -93,4 +98,3 @@ class TestConfigFile(BaseTest, AutobuildBaselineCompare):
 
 if __name__ == '__main__':
     unittest.main()
-

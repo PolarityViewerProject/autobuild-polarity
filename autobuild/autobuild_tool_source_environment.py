@@ -1,16 +1,17 @@
+#!/usr/bin/env python2
 # $LicenseInfo:firstyear=2010&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -79,9 +80,11 @@ def load_vsvars(vsver):
                              (key, vsver, explain))
 
     if common.get_current_platform() == common.PLATFORM_WINDOWS64:
-        vsvars_path = os.path.join(VSxxxCOMNTOOLS, "..", "..", "VC", "Auxiliary", "Build", "vcvars64.bat")
+        vsvars_path = os.path.join(
+            VSxxxCOMNTOOLS, "..", "..", "VC", "Auxiliary", "Build", "vcvars64.bat")
     else:
-        vsvars_path = os.path.join(VSxxxCOMNTOOLS, "..", "..", "VC", "Auxiliary", "Build", "vcvars32.bat")
+        vsvars_path = os.path.join(
+            VSxxxCOMNTOOLS, "..", "..", "VC", "Auxiliary", "Build", "vcvars32.bat")
 
     # Invent a temp filename into which to capture our script output. Some
     # versions of vsvars32.bat emit stdout, some don't; we've been bitten both
@@ -102,7 +105,8 @@ call "%s"
         with tempfile.NamedTemporaryFile(suffix=".cmd", delete=False, mode="w") as temp_script:
             temp_script.write(temp_script_content)
             temp_script_name = temp_script.name
-        logger.debug("wrote to %s:\n%s" % (temp_script_name, temp_script_content))
+        logger.debug("wrote to %s:\n%s" %
+                     (temp_script_name, temp_script_content))
 
         try:
             # Run our little batch script. Intercept any stdout it produces,
@@ -114,7 +118,8 @@ call "%s"
             logger.debug(script.communicate()[0].rstrip())
             rc = script.wait()
             if rc != 0:
-                raise SourceEnvError("%s failed with rc %s" % (' '.join(cmdline), rc))
+                raise SourceEnvError("%s failed with rc %s" %
+                                     (' '.join(cmdline), rc))
 
         finally:
             # Whether or not the temporary script file worked, clean it up.
@@ -130,7 +135,8 @@ call "%s"
         os.remove(temp_output.name)
 
     try:
-        # trust pprint.pprint() to produce output readable by ast.literal_eval()
+        # trust pprint.pprint() to produce output readable by
+        # ast.literal_eval()
         vsvars = literal_eval(raw_environ)
     except Exception:
         # but in case of a glitch, report raw string data for debugging
@@ -376,7 +382,8 @@ def do_source_environment(args):
         try:
             use_ib = int(os.environ['USE_INCREDIBUILD'])
         except ValueError:
-            logger.warning("USE_INCREDIBUILD environment variable contained garbage %r (expected 0 or 1)" % os.environ['USE_INCREDIBUILD'])
+            logger.warning("USE_INCREDIBUILD environment variable contained garbage %r (expected 0 or 1)" %
+                           os.environ['USE_INCREDIBUILD'])
             use_ib = 0
         except KeyError:
             # We no longer require Incredibuild for Windows builds. Therefore,
@@ -406,11 +413,11 @@ class AutobuildTool(autobuild_base.AutobuildBase):
     def get_details(self):
         return dict(name=self.name_from_file(__file__),
                     description='Prints out the shell environment Autobuild-based buildscripts to use (by calling \'eval\').')
-    
+
     # called by autobuild to add help and options to the autobuild parser, and
     # by standalone code to set up argparse
     def register(self, parser):
-        parser.description='prints out the shell environment Autobuild-based buildscripts to use (by calling \'eval\' i.e. eval "$(autobuild source_environment)").'
+        parser.description = 'prints out the shell environment Autobuild-based buildscripts to use (by calling \'eval\' i.e. eval "$(autobuild source_environment)").'
         parser.add_argument('-V', '--version', action='version',
                             version='source_environment tool module %s' % common.AUTOBUILD_VERSION_STRING)
 

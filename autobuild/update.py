@@ -1,17 +1,17 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 # $LicenseInfo:firstyear=2010&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -39,6 +39,7 @@ logger = logging.getLogger('autobuild.update')
 
 class UpdateError(AutobuildError):
     pass
+
 
 # ****************************************************************************
 #   Updater management machinery
@@ -179,6 +180,7 @@ https://wiki.lindenlab.com/wiki/Autobuild/Incompatible_Configuration_File_Error"
 # ****************************************************************************
 # -------------------------------- 1.1 -> 1.2 --------------------------------
 
+
 class _Update_1_1(object):
     """
     Converts a 1.1 version configuration to 1.2.
@@ -237,7 +239,6 @@ class _Update_1_1(object):
                 'filters': None,
                 'options': []}
 
-
     def __call__(self, old_config):
         assert old_config['version'] == '1.1'
         config = old_config.copy()
@@ -246,8 +247,10 @@ class _Update_1_1(object):
             package_description = self.PackageDescription('unnamed')
             config["package_description"] = package_description
             self._insert_package_properties(old_package, package_description)
-            self._insert_command('configure', old_package.get('configure', {}), package_description)
-            self._insert_command('build', old_package.get('build', {}), package_description)
+            self._insert_command('configure', old_package.get(
+                'configure', {}), package_description)
+            self._insert_command('build', old_package.get(
+                'build', {}), package_description)
             for (platform_name, manifest) in old_package.get('manifest', {}).iteritems():
                 self._get_platform(platform_name, package_description)["manifest"] = \
                     manifest.get('files', [])
@@ -265,7 +268,7 @@ class _Update_1_1(object):
         for (key, value) in self.package_properties.iteritems():
             if key in old_package:
                 package[value] = old_package[key]
-    
+
     def _insert_archives(self, old_archives, package):
         for (platform_name, old_archive) in old_archives.iteritems():
             platform = self._get_platform(platform_name, package)
@@ -273,11 +276,11 @@ class _Update_1_1(object):
             platform["archive"] = archive
             for (key, value) in self.archive_properties.iteritems():
                 archive[value] = old_archive[key]
-   
+
     def _insert_command(self, type, old_commands, package):
         for (platform_name, old_command) in old_commands.iteritems():
             platform = self._get_platform(platform_name, package)
-            #FIXME: find a better way to choose the default configuration.
+            # FIXME: find a better way to choose the default configuration.
             default_configuration = 'RelWithDebInfo'
             if default_configuration in platform["configurations"]:
                 build_configuration = platform["configurations"][default_configuration]
@@ -288,15 +291,16 @@ class _Update_1_1(object):
             if 'command' in old_command:
                 tokens = shlex.split(old_command['command'])
                 command = tokens.pop(0)
-                # It is pretty much impossible to infer where the options end and the arguments 
+                # It is pretty much impossible to infer where the options end and the arguments
                 # begin since we don't know which options take values, so make everything an
                 # argument. Parent options will come before arguments so things should probably work
                 # as expected.
-                build_configuration[type] = self.Executable(command=command, arguments=tokens)
+                build_configuration[type] = self.Executable(
+                    command=command, arguments=tokens)
                 build_configuration["default"] = True
             if 'directory' in old_command:
                 platform["build_directory"] = old_command['directory']
-    
+
     def _get_platform(self, platform_name, package):
         if platform_name in package["platforms"]:
             return package["platforms"][platform_name]
@@ -305,6 +309,7 @@ class _Update_1_1(object):
             platform["name"] = platform_name
             package["platforms"][platform_name] = platform
             return platform
+
 
 _register('1.1', '1.2', _Update_1_1())
 

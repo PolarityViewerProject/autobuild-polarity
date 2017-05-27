@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 """\
 @file   basetest.py
 @author Nat Goodspeed
@@ -7,17 +7,17 @@
 """
 # $LicenseInfo:firstyear=2012&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -40,6 +40,7 @@ from contextlib import contextmanager
 from cStringIO import StringIO
 
 from autobuild import common
+
 
 class BaseTest(unittest.TestCase):
     def setUp(self):
@@ -80,18 +81,20 @@ class BaseTest(unittest.TestCase):
                     if err.errno == errno.ENOENT:
                         return
                     if err.errno != errno.EACCES:
-                        print("*** Unknown %s (errno %s): %s: %s" % \
+                        print("*** Unknown %s (errno %s): %s: %s" %
                               (err.__class__.__name__, err.errno, err, path))
                         sys.stdout.flush()
                         raise
                     if (time.time() - start) > 10:
-                        print("*** remove(%r) timed out after %s retries" % (path, tries))
+                        print("*** remove(%r) timed out after %s retries" %
+                              (path, tries))
                         sys.stdout.flush()
                         raise
                     time.sleep(1)
 
     def tearDown(self):
         pass
+
 
 def clean_file(pathname):
     try:
@@ -101,6 +104,7 @@ def clean_file(pathname):
             print("*** Can't remove %s: %s" % (pathname, err), file=sys.stderr)
             # But no exception, we're still trying to clean up.
 
+
 def clean_dir(pathname):
     try:
         shutil.rmtree(pathname)
@@ -109,19 +113,25 @@ def clean_dir(pathname):
         if err.errno != errno.ENOENT:
             print("*** Can't remove %s: %s" % (pathname, err), file=sys.stderr)
 
+
 def assert_in(item, container):
     assert item in container, "%r not in %r" % (item, container)
+
 
 def assert_not_in(item, container):
     assert item not in container, "%r should not be in %r" % (item, container)
 
+
 def assert_found_in(regex, container):
     pattern = re.compile(regex)
-    assert any(pattern.search(item) for item in container), "search failed for %r in %r" % (regex, container)
+    assert any(pattern.search(item)
+               for item in container), "search failed for %r in %r" % (regex, container)
+
 
 def assert_not_found_in(regex, container):
     pattern = re.compile(regex)
-    assert not any(pattern.search(item) for item in container), "search found %r in %r" % (regex, container)
+    assert not any(pattern.search(item)
+                   for item in container), "search found %r in %r" % (regex, container)
 
 
 @contextmanager
@@ -181,6 +191,7 @@ def exc(exceptionslist, pattern=None, without=None, message=None):
         raise AssertionError(message or
                              ("with block did not raise " + exceptionnames))
 
+
 def ExpectError(errfrag, expectation, exception=common.AutobuildError):
     """
     Usage:
@@ -200,6 +211,7 @@ def ExpectError(errfrag, expectation, exception=common.AutobuildError):
     """
     return exc(exception, pattern=errfrag, message=expectation)
 
+
 class CaptureStdout(object):
     """
     Usage:
@@ -213,6 +225,7 @@ class CaptureStdout(object):
     Note that this does NOT capture output emitted by a child process -- only
     data written to sys.stdout.
     """
+
     def __enter__(self):
         self.stdout = sys.stdout
         sys.stdout = StringIO()
@@ -220,4 +233,3 @@ class CaptureStdout(object):
 
     def __exit__(self, *exc_info):
         sys.stdout = self.stdout
-

@@ -1,16 +1,17 @@
+#!/usr/bin/env python2
 # $LicenseInfo:firstyear=2010&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,14 +30,17 @@ from .basetest import BaseTest
 
 captured_stdout = ''
 
+
 class EarlyExitException(Exception):
     pass
+
 
 class CatchStdOut:
     def write(self, text):
         global captured_stdout
         captured_stdout += text
         pass
+
 
 class TestOptions(BaseTest):
     def setUp(self):
@@ -48,6 +52,7 @@ class TestOptions(BaseTest):
         self.old_stderr = sys.stderr
         sys.stderr = CatchStdOut()
         self.autobuild_fixture = autobuild.autobuild_main.Autobuild()
+
         def mock_exit(value=None, message=None):
             if(message):
                 print(message)
@@ -101,19 +106,20 @@ class TestOptions(BaseTest):
             ret = self.autobuild_fixture.main(['build', '-h'])
             self.fail()
         except EarlyExitException:
-            self.assertNotEquals(-1, captured_stdout.find("an option to pass to the build command"))
+            self.assertNotEquals(-1, captured_stdout.find(
+                "an option to pass to the build command"))
         pass
-        
+
     def test_tool_search_for_tools(self):
         """test_tool_search_for_tools: check that autobuild --help shows test tools help"""
         try:
             ret = self.autobuild_fixture.main(['--help'])
             self.fail()
         except EarlyExitException:
-            self.assertNotEquals(-1, captured_stdout.find("Builds platform targets."))
+            self.assertNotEquals(-1,
+                                 captured_stdout.find("Builds platform targets."))
         pass
 
 
 if __name__ == '__main__':
     unittest.main()
-
