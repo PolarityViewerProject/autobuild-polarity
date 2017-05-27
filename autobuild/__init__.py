@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 # $LicenseInfo:firstyear=2012&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
 #

@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 """\
 @file   test_update.py
 @author Nat Goodspeed
