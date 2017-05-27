@@ -1,16 +1,16 @@
 # $LicenseInfo:firstyear=2010&license=mit$
 # Copyright (c) 2010, Linden Research, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -43,37 +43,38 @@ class ExecutableError(common.AutobuildError):
 class Executable(common.Serialized):
     """
     An executable object which invokes a provided command as subprocess.
-    
+
     Attributes:
         command - The command to invoke.
         arguments - The arguments to pass to the command being invoked.
         options - The options to pass to the command being invoked.
         filters - Regexes to filter command output.
         parent - An Executable instance from which to inherit values from.
-        
+
     Instances of this object may be chained by using the parent attribute.  If either the command or
     arguments attribute of this object is set to None, the value of the parents attribute will be
     used.  Options are merged with parent options coming before this objects options in the full 
     options list.
-    
+
     E.g.:
         myExecutable = Executable(command='gcc', options=['-ggdb'], arguments=['foo.c', 'bar.c'])
         result = myExecutable()
     """
-    
+
     parent = None
-    
+
     def __init__(self, command=None, options=[], arguments=None, filters=None, parent=None):
         self.command = command
         self.options = options
         self.arguments = arguments
         self.parent = parent
         self.filters = filters
-    
+
     def __call__(self, options=[], environment=os.environ):
         filters = self.get_filters()
         if filters:
-            filters_re = [re.compile(filter, re.MULTILINE) for filter in filters]
+            filters_re = [re.compile(filter, re.MULTILINE)
+                          for filter in filters]
             process = subprocess.Popen(' '.join(self._get_all_arguments(options)),
                                        shell=True, env=environment, stdout=subprocess.PIPE)
             for line in process.stdout:
@@ -85,13 +86,13 @@ class Executable(common.Serialized):
             return process.wait()
         else:
             return subprocess.call(' '.join(self._get_all_arguments(options)), shell=True, env=environment)
-   
+
     def __str__(self, options=[]):
         try:
             return ' '.join(self._get_all_arguments(options))
         except:
             return 'INVALID EXECUTABLE!'
-    
+
     def get_arguments(self):
         """
         Returns the arguments which will be passed to the command on execution. 
@@ -102,7 +103,7 @@ class Executable(common.Serialized):
             return self.parent.get_arguments()
         else:
             return []
-    
+
     def get_options(self):
         """
         Returns all options which will be passed to the command on execution. 
@@ -113,7 +114,7 @@ class Executable(common.Serialized):
             all_options = []
         all_options.extend(self.options)
         return all_options
-    
+
     def get_command(self):
         """
         Returns the command this object will envoke on execution.
@@ -124,7 +125,7 @@ class Executable(common.Serialized):
             return self.parent.get_command()
         else:
             return None
-    
+
     def get_filters(self):
         """
         Returns the filters on command output.
@@ -135,7 +136,7 @@ class Executable(common.Serialized):
             return self.parent.get_filters()
         else:
             return None
-    
+
     def _get_all_arguments(self, options):
         actual_command = self.get_command()
         if actual_command is None:
@@ -144,4 +145,4 @@ class Executable(common.Serialized):
         all_arguments.extend(self.get_options())
         all_arguments.extend(options)
         all_arguments.extend(self.get_arguments())
-        return all_arguments        
+        return all_arguments

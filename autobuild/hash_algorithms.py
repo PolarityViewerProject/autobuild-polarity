@@ -48,6 +48,7 @@ class hash_algorithm(object):
         ...
     """
     # called when we instantiate @hash_algorithm("md5")
+
     def __init__(self, key):
         self.key = key
 

@@ -50,48 +50,56 @@ from .basetest import *
 
 logger = logging.getLogger("test_graph")
 
+
 class GraphOptions(object):
     def __init__(self):
         self.source_file = None
-        self.graph_type='dot'
-        self.display=False
-        self.graph_file=None
-        self.dot_file=None
-        self.platform=None
-        self.addrsize=common.DEFAULT_ADDRSIZE
+        self.graph_type = 'dot'
+        self.display = False
+        self.graph_file = None
+        self.dot_file = None
+        self.platform = None
+        self.addrsize = common.DEFAULT_ADDRSIZE
+
 
 class TestGraph(BaseTest):
     def setUp(self):
         BaseTest.setUp(self)
-        self.options=GraphOptions()
-        
+        self.options = GraphOptions()
+
     def test_nometa(self):
         with ExpectError("No metadata found", "no error detected when archive does not have metadata"):
-            self.options.source_file = os.path.join(self.this_dir, "data", "nometa-0.1-common-111.tar.bz2")
+            self.options.source_file = os.path.join(
+                self.this_dir, "data", "nometa-0.1-common-111.tar.bz2")
             graph.AutobuildTool().run(self.options)
 
     def test_nopackage(self):
         with ExpectError("No metadata found", "no error detected when archive does not exist"):
-            self.options.source_file = os.path.join(self.this_dir, "data", "nonexistant.tar.bz2")
+            self.options.source_file = os.path.join(
+                self.this_dir, "data", "nonexistant.tar.bz2")
             graph.AutobuildTool().run(self.options)
 
     def test_nodepends(self):
-        self.options.source_file = os.path.join(self.this_dir, "data", "bingo-0.1-common-111.tar.bz2")
-        output_lines=[]
+        self.options.source_file = os.path.join(
+            self.this_dir, "data", "bingo-0.1-common-111.tar.bz2")
+        output_lines = []
         with CaptureStdout() as stream:
             graph.AutobuildTool().run(self.options)
             output_lines = stream.getvalue().splitlines()
-        assert_found_in("label=\"bingo dependencies for ", output_lines) # omit platform
+        assert_found_in("label=\"bingo dependencies for ",
+                        output_lines)  # omit platform
         assert_found_in("bingo \\[", output_lines)
         assert_not_found_in("->", output_lines)
 
     def test_depends(self):
-        self.options.source_file = os.path.join(self.this_dir, "data", "bongo-0.1-common-111.tar.bz2")
-        output_lines=[]
+        self.options.source_file = os.path.join(
+            self.this_dir, "data", "bongo-0.1-common-111.tar.bz2")
+        output_lines = []
         with CaptureStdout() as stream:
             graph.AutobuildTool().run(self.options)
             output_lines = stream.getvalue().splitlines()
-        assert_found_in("label=\"bongo dependencies for ", output_lines) # omit platform
+        assert_found_in("label=\"bongo dependencies for ",
+                        output_lines)  # omit platform
         assert_found_in("bingo \\[", output_lines)
         assert_in("bingo -> bongo;", output_lines)
 
@@ -104,7 +112,8 @@ class TestGraph(BaseTest):
         try:
             self.options.graph_file = os.path.join(self.tmp_dir, "graph.png")
             self.options.dot_file = os.path.join(self.tmp_dir, "graph.dot")
-            self.options.source_file = os.path.join(self.this_dir, "data", "bongo-0.1-common-111.tar.bz2")
+            self.options.source_file = os.path.join(
+                self.this_dir, "data", "bongo-0.1-common-111.tar.bz2")
             try:
                 graph.AutobuildTool().run(self.options)
             except InvocationException as err:
