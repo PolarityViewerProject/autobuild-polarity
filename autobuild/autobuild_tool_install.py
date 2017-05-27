@@ -44,6 +44,7 @@ import tarfile
 import zipfile
 import urllib2
 import codecs
+import certifi
 
 from . import common
 from . import configfile
@@ -247,7 +248,7 @@ def get_package_file(package_name, package_url, hash_algorithm='md5', expected_h
             logger.warning("downloading %s" % package_name)
             logger.info("  get %s\n     to %s" % (package_url, cache_file))
             try:
-                package_response = urllib2.urlopen(package_url, None, download_timeout_seconds)
+                package_response = urllib2.urlopen(url = package_url, timeout = download_timeout_seconds, cafile = certifi.where())
             except urllib2.URLError as err:
                 logger.warning("error: %s\n  downloading package %s" % (err, package_url))
                 package_response = None
