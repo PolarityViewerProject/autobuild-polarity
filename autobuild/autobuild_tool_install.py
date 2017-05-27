@@ -45,6 +45,7 @@ import zipfile
 import urllib2
 import codecs
 import rarfile # <polarity>
+import certifi
 
 from . import common
 from . import configfile
