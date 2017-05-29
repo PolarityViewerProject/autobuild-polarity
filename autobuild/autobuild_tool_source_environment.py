@@ -293,9 +293,9 @@ if common.get_current_platform().startswith(common.PLATFORM_WINDOWS):
 
     # function for loading visual studio related env vars
     load_vsvars() {
-%(vsvars)s
+        %(vsvars)s
     }
-    
+
     if ! (($USE_INCREDIBUILD)) ; then
         load_vsvars
     fi
