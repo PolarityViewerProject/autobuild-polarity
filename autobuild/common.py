@@ -504,7 +504,7 @@ def establish_build_id(build_id_arg):
     elif 'BUILD_ID' in os.environ:
         build_id = os.environ['BUILD_ID']
     else:
-        build_id = time.strftime("%Y%m%d%H%M")
+        build_id = time.strftime("%Y%m%d%H%M%S")
         logger.warn("Warning: no --id argument or BUILD_ID environment variable specified;\n    using the date and time (%s), which may not be unique" % build_id)
     os.environ['BUILD_ID'] = build_id
     return build_id
