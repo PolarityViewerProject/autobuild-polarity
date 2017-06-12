@@ -112,7 +112,7 @@ class AutobuildTool(autobuild_base.AutobuildBase):
         platform = common.establish_platform(args.platform, args.addrsize)
         # sets id (even if not specified),
         build_id = common.establish_build_id(args.build_id)
-        # and stores in the AUTOBUILD_BUILD_ID environment variable
+        # and stores in the BUILD_ID environment variable
         config = configfile.ConfigurationDescription(args.config_file)
         package_errors = \
             configfile.check_package_attributes(config,
