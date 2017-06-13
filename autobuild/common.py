@@ -491,20 +491,20 @@ def select_configurations(args, config, verb):
 def establish_build_id(build_id_arg):
     """determine and return a build_id based on (in preference order):
        the --id argument, 
-       the BUILD_ID environment variable,
+       the BUILD_NUMBER environment variable,
        the date/time
     If we reach the date fallback, a warning is logged
-    In addition to returning the id value, this sets the BUILD_ID environment
+    In addition to returning the id value, this sets the BUILD_NUMBER environment
     variable for any descendent processes so that recursive invocations will have access
     to the same value.
     """
 
     if build_id_arg:
         build_id = build_id_arg
-    elif 'BUILD_ID' in os.environ:
-        build_id = os.environ['BUILD_ID']
+    elif 'BUILD_NUMBER' in os.environ:
+        build_id = os.environ['BUILD_NUMBER']
     else:
         build_id = time.strftime("%Y%m%d%H%M%S")
-        logger.warn("Warning: no --id argument or BUILD_ID environment variable specified;\n    using the date and time (%s), which may not be unique" % build_id)
-    os.environ['BUILD_ID'] = build_id
+        logger.warn("Warning: no --id argument or BUILD_NUMBER environment variable specified;\n    using the date and time (%s), which may not be unique" % build_id)
+    os.environ['BUILD_NUMBER'] = build_id
     return build_id
