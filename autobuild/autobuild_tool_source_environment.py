@@ -291,14 +291,15 @@ if common.get_current_platform().startswith(common.PLATFORM_WINDOWS):
         fi
     }
 
+    # This currently breaks on my build environment - Xenhat
     # function for loading visual studio related env vars
-    load_vsvars() {
-        %(vsvars)s
-    }
+    #load_vsvars() {
+    #    %(vsvars)s
+    #}
 
-    if ! (($USE_INCREDIBUILD)) ; then
-        load_vsvars
-    fi
+    #if ! (($USE_INCREDIBUILD)) ; then
+    #    load_vsvars
+    #fi
 
     $restore_xtrace
     """
