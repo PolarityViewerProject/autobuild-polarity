@@ -374,7 +374,9 @@ class Dependencies(common.Serialized):
                 self.dependencies[name] = package
             self.update(saved_data)
         elif not os.path.exists(self.path):
-            logger.warn(
+            # <polarity> This gets sent to the error pipe and throws our build tools off.
+            # logger.warn(
+            logger.info(
                 "Installed packages file '%s' not found; creating." % self.path)
         else:
             raise ConfigurationError(
