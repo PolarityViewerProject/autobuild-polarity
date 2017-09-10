@@ -634,22 +634,22 @@ def _install_common(configured_name, platform, package, package_file, install_di
         logger.info("%s is already installed" % package.name)
         return None, None
     # Check for transitive dependency conflicts
-    dependancy_conflicts = transitive_search(metadata, installed)
-    if dependancy_conflicts:
-        raise InstallError("""Package not installed due to conflicts
-%s
-  configuration %s
-  version       %s
-  build_id      %s
-Conflict: %s
-  If you have updated the configuration for any of the conflicting packages,
-  try uninstalling those packages and rerunning.""" %
-                           (package.name,
-                            metadata.configuration,
-                            metadata.package_description.version,
-                            metadata.build_id,
-                            dependancy_conflicts
-                            ))
+#    dependancy_conflicts = transitive_search(metadata, installed)
+#    if dependancy_conflicts:
+#        raise InstallError("""Package not installed due to conflicts
+#%s
+#  configuration %s
+#  version       %s
+#  build_id      %s
+#Conflict: %s
+#  If you have updated the configuration for any of the conflicting packages,
+#  try uninstalling those packages and rerunning.""" %
+#                           (package.name,
+#                            metadata.configuration,
+#                            metadata.package_description.version,
+#                            metadata.build_id,
+#                            dependancy_conflicts
+#                            ))
 
     # check that the install dir exists...
     if not os.path.exists(install_dir):
